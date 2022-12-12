@@ -1,0 +1,31 @@
+[33m568b6da[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;32mdev[m[33m)[m HEAD@{0}: rebase finished: returning to refs/heads/master
+[33m568b6da[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;32mdev[m[33m)[m HEAD@{1}: rebase: updating HEAD
+[33m568b6da[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;32mdev[m[33m)[m HEAD@{2}: commit: made schemas fields required for user authentication
+[33ma3e4453[m[33m ([m[1;31morigin/dev[m[33m, [m[1;31mheroku/main[m[33m)[m HEAD@{3}: commit: change from firstname and lastname to name in the user model
+[33m03aa950[m HEAD@{4}: commit: fixing signup error
+[33m61b854f[m HEAD@{5}: commit: added user signup model and trying to signup
+[33m328b70a[m HEAD@{6}: commit: added user signup model and trying to signup
+[33m0f1a309[m HEAD@{7}: commit: added user signup model and trying to signup
+[33m99a37bb[m HEAD@{8}: commit: added user signup model and trying to signup
+[33m5e36ef2[m HEAD@{9}: commit: added user signup model and trying to signup
+[33m9f397e1[m HEAD@{10}: commit: added user signup model and trying to signup
+[33m014c21f[m HEAD@{11}: commit: added user signup model and trying to signup
+[33m8ae0277[m HEAD@{12}: commit: environment variable updated
+[33me170acc[m[33m ([m[1;31mheroku/master[m[33m)[m HEAD@{13}: commit: connected to server and mongodb
+[33mceaaecf[m HEAD@{14}: commit: connected to server and mongodb
+[33m596eb1a[m HEAD@{15}: commit: connected to server and mongodb
+[33md82e366[m HEAD@{16}: commit: added access and middleware files with models as well
+[33me2effab[m HEAD@{17}: commit: added access and middleware files with models as well
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{18}: checkout: moving from master to dev
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{19}: checkout: moving from dev to master
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{20}: checkout: moving from master to dev
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{21}: checkout: moving from dev to master
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{22}: checkout: moving from 29f482b414580852b0271454f8964ac98d84dc6a to dev
+[33m29f482b[m HEAD@{23}: pull --rebase: first heroku push
+[33mb423418[m HEAD@{24}: pull --rebase: first heroku push
+[33m8a06c1c[m HEAD@{25}: pull --rebase: checkout 8a06c1c5c0a4d532b195d17fb82f3376a9f91a73
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{26}: checkout: moving from dev to master
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{27}: checkout: moving from master to dev
+[33mfa438a4[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{28}: commit: first commit
+[33m3f2e6a4[m HEAD@{29}: commit: first heroku push
+[33medd4db9[m HEAD@{30}: commit (initial): first heroku push
