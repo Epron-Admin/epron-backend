@@ -24,21 +24,13 @@ let newUser = new Schema({
         type: Schema.Types.ObjectId,
         ref:'CollectionCenter',
     }],
-    country: {
-        type: String,
-    },
-    countryid: {
-        type: String,
-    },
-    stateid: {
-        type: String,
-    },
-    city: {
-        type: String,
-    },
-    cityid: {
-        type: String,
-    },
+    // country: {
+    //     type: String,
+    // },
+    // countryid: {
+    //     type: String,
+    // },
+    
     address: {
         type: String,
     },
@@ -104,4 +96,4 @@ newUser.methods.isValid = function(hashedpassword){
 
 
 
-export default mongoose.model('User', newUser);
+export default mongoose.model('FakeUser', newUser);

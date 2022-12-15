@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 // import { fetch_collection_centers_by_userid } from '../collectioncenter/collection.controllers.js';
 
 import { 
+    asign_collection_center_to_recyclers,
     asign_recycler_to_collection_center,
     block_user,
     fetch_all_admin_users,
@@ -19,6 +20,7 @@ import {
     new_category, 
     new_sub_cateory,
     reg_user_erpon,
+    remove_collection_center_recycler_user,
     remove_log_category,
     remove_log_type,
     remove_recycler_to_collection_center,
@@ -54,7 +56,10 @@ router.patch('/asign_recycler', asign_recycler_to_collection_center);
 router.patch('/remove_recycler', remove_recycler_to_collection_center);
 
 router.get('/all_accepted_requests', fetch_all_pickups_accepted);
-router.get('/recyclers-logged-waste-weight', fetch_logewaste_weight_by_recyclers)
+router.get('/recyclers-logged-waste-weight', fetch_logewaste_weight_by_recyclers);
+
+router.patch('/asign_center_to_recycler', asign_collection_center_to_recyclers);
+router.patch('/remove_collection_center', remove_collection_center_recycler_user);
 
 
 

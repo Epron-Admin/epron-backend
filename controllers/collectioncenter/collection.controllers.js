@@ -323,7 +323,7 @@ export const accept_request_pickup = async (req, res) => {
                 pickup.accept_request = true;
                 pickup.accepted_by = req.body.user_id;
                 pickup.save().then((result) => {
-                    return res.status(401).send({error: true, message: "Pickup has been accepted by you succuesfuly"});
+                    return res.status(200).send({error: false, message: "Pickup has been accepted by you succuesfuly"});
                 }).catch(err => {
                     console.log(err.code);
                     res.send({ error: true, message: 'failed to accept pickup' });

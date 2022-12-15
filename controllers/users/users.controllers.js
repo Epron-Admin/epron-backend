@@ -182,6 +182,22 @@ export const find_user_byid = async (req, res) => {
     });
 }
 
+export const find_collection_center_by_location = async (req, res) => {
+    
+    User.find({ lga: req.params.lga }).exec((err, user) => {
+        if (err) {
+            console.log(err);
+            return res.json({error: true, status: 401, message: "Error occured"})
+        }
+        if (!user) {
+            console.log(err);
+            return res.json({error: true, status: 404, message: "User not found"})
+        }
+        
+        return res.json({error: false, status: 201, user: user, message: "successful!" });
+    });
+}
+
 
 
 

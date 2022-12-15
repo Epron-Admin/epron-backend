@@ -25,7 +25,8 @@ import {
 		get_naija_lgas,
 		get_naija,
 		find_user_by_role,
-		find_user_byid
+		find_user_byid,
+		find_collection_center_by_location
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -65,6 +66,8 @@ router.post('/bulk-log3', bulk_log_upload3);
 
 router.get("/find_user_by_role", find_user_by_role);
 router.get("/user/:id", find_user_byid);
+
+router.get('/collection_by_location/:lga', find_collection_center_by_location);
 
 
 

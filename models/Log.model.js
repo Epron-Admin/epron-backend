@@ -20,11 +20,11 @@ let logEquipment = new Schema({
     },
     unit: {
         type: String,
-        required: true
+        // required: true
     },
     weight: {
         type: Number,
-        required: true
+        // required: true
     },
     user_id: {
         type: Schema.Types.ObjectId,

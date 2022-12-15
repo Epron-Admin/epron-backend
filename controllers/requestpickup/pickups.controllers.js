@@ -70,7 +70,7 @@ export const fetch_all_pickup = async (req, res) => {
             limit: limit
         }
     }
-    RequestPickup.find({}).sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
+    RequestPickup.find({}).sort('-created_at').popolate("accepted_by").limit(limit).skip(startIndex).exec((err, requestpickup) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch all request pickups"})
@@ -100,7 +100,7 @@ export const fetch_all_pickup_based_on_location = async (req, res) => {
             limit: limit
         }
     }
-    RequestPickup.find({lga: req.params.location}).sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
+    RequestPickup.find({lga: req.params.location}).popolate("accepted_by").sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch all request pickups"})
@@ -130,7 +130,7 @@ export const fetch_all_pickup_based_on_location_unaccepted = async (req, res) =>
             limit: limit
         }
     }
-    RequestPickup.find({lga: req.params.location, accept_request: false}).sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
+    RequestPickup.find({lga: req.params.location, accept_request: false}).popolate("accepted_by").sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch all request pickups"})
@@ -160,7 +160,7 @@ export const fetch_all_pickup_based_on_location_accepted = async (req, res) => {
             limit: limit
         }
     }
-    RequestPickup.find({lga: req.params.location, accept_request: true}).sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
+    RequestPickup.find({lga: req.params.location, accept_request: true}).popolate("accepted_by").sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch all request pickups"})
@@ -190,7 +190,7 @@ export const fetch_all_pickup_based_on_location_anduser = async (req, res) => {
             limit: limit
         }
     }
-    RequestPickup.find({accepted_by: req.params.id, lga: req.params.location, accept_request: true}).sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
+    RequestPickup.find({accepted_by: req.params.id, lga: req.params.location, accept_request: true}).popolate("accepted_by").sort('-created_at').limit(limit).skip(startIndex).exec((err, requestpickup) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch request pickups"})

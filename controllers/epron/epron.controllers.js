@@ -11,6 +11,8 @@ import Collection from '../../models/CollectionCenter.model.js';
 import RequestPickup from '../../models/RequestPickup.model.js';
 import RecyclerWaste from '../../models/RecyclerWaste.model.js'
 
+import Fake from '../../models/FakeUser.model.js'; // remove this import
+
 
  
 
@@ -479,6 +481,12 @@ export const fetch_all_loged_ewaste = async (req, res) => {
 export const asign_recycler_to_collection_center = (req, res) => {
     //  the user_id is the id of the user which is a collection center or collector while signing up
     Collection.findOne({user_id: req.body.collector_user_id}).exec((err, center) => {
+        if (
+            (!req.body.collector_user_id)
+            (!req.body.recycler_user_id)
+        ) {
+            return res.status(401).send({error: true, message: "Collection center ID, and recycler ID are required"});
+        }
         if (err) {
             return res.json({error: true, status: 401, message: "An error occured"})
         }
@@ -498,7 +506,7 @@ export const asign_recycler_to_collection_center = (req, res) => {
                     res.json({ error: false, code: 200, center: result, status: 'success', message: 'user has been asigned to collection center'});
                 }).catch(err => {
                     // console.log(err.code);
-                    res.send({ error: true, message: 'failed to asigned user' });
+                    res.send({ error: true, message: 'failed to asign user to collection' });
                 });
             } else {
                 res.send({ error: true, message: 'user already asigned to this collection center' });
@@ -528,11 +536,11 @@ export const remove_recycler_to_collection_center = (req, res) => {
             if (index === 1) {
                 center.recyclers.splice(index, 1);
                 center.save().then(result => {
-                    res.json({ error: false, code: 200, center: result, status: 'success', message: 'user has been asigned to collection center'});
+                    res.json({ error: false, code: 200, center: result, status: 'success', message: 'user has been removed from collection center'});
                     //res.status(200).send({mssage: 'update successful'});
                 }).catch(err => {
                     // console.log(err.code);
-                    res.send({ error: true, message: 'failed to asigned user' });
+                    res.send({ error: true, message: 'failed to remove  user' });
                 });
             } else {
                 res.send({ error: true, code: 404, message: 'recyceler was not asined to this collection center' });
@@ -627,6 +635,87 @@ export const fetch_logewaste_weight_by_recyclers = async (req, res) => {
         }, 0);
         return res.json({error: false, status: 201, total_logged_ewaste: total_ewaste_logged, total_weight_logged_ton: waste_weight, pagination: results, ewaste: ewaste, message: "Fetch all logged ewaste successful!" });
     });
+}
+
+export const asign_collection_center_to_recyclers = (req, res) => {
+    //  the user_id is the id of the user which is a collection center or collector while signing up
+    Fake.findById({_id: req.body.recycler_id}).exec((err, user) => {
+        console.log("user", user)
+        if (
+            (!req.body.collection_center) ||
+            (!req.body.role) ||
+            (!req.body.recycler_id)
+        ) {
+            return res.status(401).send({error: true, message: "Collection center ID, Role and recycler ID are required"});
+        }
+        if (err) {
+            return res.json({error: true, status: 401, message: "An error occured"});
+        }
+        if (!user) {
+            res.send({code: 404, error: true, message: 'Can not find user' });
+        }
+        if (user.role != 'recycler') {
+            res.send({code: 404, error: true, message: 'user not a recycler' });
+        }
+        else {
+        
+            const index = user.collection_center.includes(req.body.collection_center);
+            console.log("index", index);
+            if (index === false) {
+                user.collection_center.push(req.body.collection_center);
+                user.save().then(result => {
+                    res.json({ error: false, code: 200, data: result, status: 'success', message: 'collection center has been asigned to recycler'});
+                }).catch(err => {
+                    // console.log(err.code);
+                    res.send({ error: true, message: 'failed to asign collection center' });
+                });
+            } else {
+                res.send({ error: true, message: 'collection center already asigned to this recycer' });
+            }
+        }
+        
+    })
+}
+
+export const remove_collection_center_recycler_user = (req, res) => {
+    if (
+        (!req.body.collection_center) ||
+        (!req.body.role) ||
+        (!req.body.recycler_id)
+    ) {
+        return res.status(401).send({error: true, message: "Collection center ID, role and recycler ID are required"});
+    }
+    Fake.findById({_id: req.body.recycler_id}).exec((err, user) => {
+        if (err) {
+            return res.json({error: true, status: 401, message: "An error occured"})
+        }
+        if (!user) {
+            res.send({code: 404, error: true, message: 'Can not find user' });
+        }
+        if (user.role != 'recycler') {
+            res.send({code: 404, error: true, message: 'user not a recycler' });
+        }
+        else {
+            console.log("centers", user)
+            // the recycler id id the id of the user who is a recycler in this case.
+            const index = user.collection_center.includes(req.body.recycler_id);
+            console.log("index", index);
+            if (index > 1) {
+                user.collection_center.splice(index, 1);
+                user.save().then(result => {
+                    res.json({ error: false, code: 200, data: result, status: 'success', message: 'collection center has been removed for this user'});
+                    //res.status(200).send({mssage: 'update successful'});
+                }).catch(err => {
+                    // console.log(err.code);
+                    res.send({ error: true, message: 'failed to asign Collection center' });
+                });
+            } else {
+                res.send({ error: true, code: 401, message: 'collection center was not asined to this user' });
+            }
+            
+        }
+        
+    })
 }
 
 
