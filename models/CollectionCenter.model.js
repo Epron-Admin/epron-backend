@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 
 let CollectionCenter = new Schema({
     user_id: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref:'User',
         required: true
     },
     recyclers: [{

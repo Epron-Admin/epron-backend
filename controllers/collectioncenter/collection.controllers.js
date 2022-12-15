@@ -39,7 +39,7 @@ export const new_collection_ceneter = (req, res) => {
 }
 
 export const fetch_all_collection_centers = (req, res) => {
-    Collection.find({}).sort('-created_at').exec((err, collection) => {
+    Collection.find({}).populate('user_id').sort('-created_at').exec((err, collection) => {
         if (err) {
             console.log(err);
             return res.send({error: true, code: 401, message: "Failed to fecth your collecton centers"});
@@ -51,7 +51,7 @@ export const fetch_all_collection_centers = (req, res) => {
 }
 
 export const fetch_collection_centers_by_userid = (req, res) => {
-    Collection.find({user_id: req.params.id}).sort('-created_at').exec((err, centers) => {
+    Collection.find({user_id: req.params.id}).populate('user_id').sort('-created_at').exec((err, centers) => {
         if (err) {
             console.log(err);
             return res.send(err);
