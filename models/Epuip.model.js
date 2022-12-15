@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 let equip = new Schema({
     category_id: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true
     },
     category_name: {
@@ -13,7 +13,7 @@ let equip = new Schema({
         required: true
     },
     sub_category_id: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true
     },
     sub_category_name: {
