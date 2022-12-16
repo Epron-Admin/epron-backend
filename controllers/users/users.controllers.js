@@ -230,6 +230,7 @@ export const find_collection_center_by_location = async (req, res) => {
 
 
 
+
 // fortgot password to be sent to your email
 export const forgot_password = (req, res, next) => {
     // console.log('Email from front', req.body);
@@ -771,6 +772,16 @@ export const bulk_log_upload3 = async (req, res, next) => {
          res.send(authors.length + ' authors have been successfully uploaded.');
      });
 };
+
+export const find_orders = (req, res) => {
+    console.log({reference: req.query.reference});
+    Order.find({reference: req.query.reference}).exec((err, order) => {
+         if (err) {
+            console.log(err);
+        }
+        return res.send(order);
+    });
+}
 
 
 

@@ -47,6 +47,9 @@ let logEquipment = new Schema({
         type: Number,
         // required: true
     },
+    payment_id: {
+        type: String,
+    },
     paid: {
         type: Boolean,
         default: false,
