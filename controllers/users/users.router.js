@@ -3,8 +3,7 @@ import express from 'express';
 
 
 import {
-		get_costomers, 
-		// initialize_transanction, 
+		get_customers,
 		user_profile, 
 		update_profile,
 		forgot_password,
@@ -26,7 +25,8 @@ import {
 		get_naija,
 		find_user_by_role,
 		find_user_byid,
-		find_collection_center_by_location
+		find_collection_center_by_location,
+		initialize_transanction
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -40,8 +40,6 @@ const router = express.Router();
 
 router.post('/forgot-password', forgot_password);
 router.post('/reset-password/:token', password_reset);
-
-router.get('/costomers', get_costomers);
 router.get('/u-profile/:id', user_profile);
 // router.get('/veryfy', mail1);
 // router.use('*', validationFunc);
@@ -68,6 +66,12 @@ router.get("/find_user_by_role/:role", find_user_by_role);
 router.get("/user/:id", find_user_byid);
 
 router.get('/collection_by_location/:lga', find_collection_center_by_location);
+
+
+// paystck payment
+router.get('/customers', get_customers);
+router.post('/init-transaction', initialize_transanction);
+// router.post('/order', create_order);
 
 
 

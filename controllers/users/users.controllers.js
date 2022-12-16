@@ -49,6 +49,35 @@ let userEmail;
 const router = express.Router();
 
 
+
+export const get_customers = (req, res) => {
+    paystack.customer.list(function(error, body) {
+        if (!error) {
+        return res.json({error: false, status: 201, customers: body, message: "success!" });
+
+        } if (error) {
+            // console.log(error);
+            return res.json({error: true, status: 401, message: error});
+        }
+    });
+}; 
+  
+export const initialize_transanction = (req, res) => {
+    console.log('trans', req.body);
+    paystack.transaction.initialize({
+        email: req.body.email,
+        amount: Number(req.body.amount) * 100
+    }).then((body) => {
+        return res.json({error: false, status: 201, customers: body.data, message: "success!" });
+        // res.send(body.data)
+        // console.log(body);
+    }).catch((error) => {
+        return res.json({error: true, status: 401, message: error});
+        // console.log(err);
+    })
+}
+
+
 export const user_profile = (req, res) => {
     User.findById(req.params.id).exec((err, user) => {
         if (err) {
@@ -198,21 +227,6 @@ export const find_collection_center_by_location = async (req, res) => {
     });
 }
 
-
-
-
-
-
-
-// paystack.{resource}.{method}
-//console.log(paystack);
-
-export const get_costomers = (req, res) => {
-  paystack.customer.list(function(error, body) {
-  console.log(error);
-  console.log(body);
-    });
-}; 
 
 
 
