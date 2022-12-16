@@ -137,7 +137,7 @@ export const find_user_by_role = async (req, res) => {
     const endIndex = page * limit;
     const results = {};
 
-    const total = await User.countDocuments({role: req.body.role}).exec();
+    const total = await User.countDocuments({role: req.params.role}).exec();
 
     if (endIndex <  await User.countDocuments().exec()) {
         results.next = {
@@ -152,7 +152,7 @@ export const find_user_by_role = async (req, res) => {
             limit: limit
         }
     }
-    User.find({role: req.body.role}).sort('-created_at').limit(limit).skip(startIndex).exec((err, user) => {
+    User.find({role: req.params.role}).sort('-created_at').limit(limit).skip(startIndex).exec((err, user) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Error occured"})

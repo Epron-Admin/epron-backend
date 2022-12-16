@@ -64,7 +64,7 @@ router.post('/bulk-log', bulk_log_upload);
 router.post('/bulk-log2', bulk_log_upload2);
 router.post('/bulk-log3', bulk_log_upload3);
 
-router.get("/find_user_by_role", find_user_by_role);
+router.get("/find_user_by_role/:role", find_user_by_role);
 router.get("/user/:id", find_user_byid);
 
 router.get('/collection_by_location/:lga', find_collection_center_by_location);
