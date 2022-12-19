@@ -2,7 +2,7 @@ import RequestPickup from '../../models/RequestPickup.model.js';
 import Ewaste from '../../models/Ewaste.model.js';
 import RecyclerWaste from '../../models/RecyclerWaste.model.js'
 import User from '../../models/User.model.js'
-import Center from '../../models/CollectionCenter.model.js'
+// import Center from '../../models/CollectionCenter.model.js'
 // import express from 'express';
 
 
@@ -77,7 +77,7 @@ export const fetch_ewaste_by_collection_center = async (req, res) => {
 }
 
 
-export const log_ewaste_from_collection_weight = async (req, res) => {
+export const log_weight_from_collection_center_ewaste = async (req, res) => {
     if (
         (!req.body.weight) ||
         (!req.body.collection_centerid) ||
@@ -98,8 +98,10 @@ export const log_ewaste_from_collection_weight = async (req, res) => {
         ton_weight = 0.0000011023 * req.body.weight;
     }
     const codePin = Math.random().toString(36).slice(2, 7);
-    // recyclers: req.body.recycler_id
-    Center.findById({ _id: req.body.collection_centerid}).exec((err, doc) => {
+    
+    // collection cennter id is the user ID signed s collection center
+    User.findById({ _id: req.body.collection_centerid}).exec((err, doc) => {
+        console.log("User collection center", doc);
         if (err) {
             return res.status(401).send({error: true, code: 401, message: "An error occcured from collection center"});
         }
@@ -109,30 +111,30 @@ export const log_ewaste_from_collection_weight = async (req, res) => {
 
         else {
 
-            const among = doc.recyclers.includes(req.body.recycler_id);
+            // const among = doc.recyclers.includes(req.body.recycler_id);
 
-            if (among === true) {
-                let ewaste = new RecyclerWaste({
-                    weight: ton_weight,
-                    unit_weight: req.body.weight, 
-                    unit: req.body.unit,
-                    collection_centerid: req.body.collection_centerid,
-                    recycler_id: req.body.recycler_id,
-                    ewaste_code: codePin,
-                    created_at: Date.now(),
-                    updated_at: Date.now()
+            // if (among === true) {
+            //     let ewaste = new RecyclerWaste({
+            //         weight: ton_weight,
+            //         unit_weight: req.body.weight, 
+            //         unit: req.body.unit,
+            //         collection_centerid: req.body.collection_centerid,
+            //         recycler_id: req.body.recycler_id,
+            //         ewaste_code: codePin,
+            //         created_at: Date.now(),
+            //         updated_at: Date.now()
             
-                });
-                ewaste.save().then(result => {
-                    res.json({error: false, code: 201, status: 'success', message: 'weight added successfuly', weight: result });
-                    // res.status(200).send({mssage: 'Category created successful'});
-                }).catch(err => {
-                    // console.log("Errorrrrrrrrrr", err);
-                    res.send({ error: true, message: 'failed to add data' });
-                });
-            } else {
-                return res.send({error: true, code: 404, message: 'Recycler not assigned to collection center.'});
-            }
+            //     });
+            //     ewaste.save().then(result => {
+            //         res.json({error: false, code: 201, status: 'success', message: 'weight added successfuly', weight: result });
+            //         // res.status(200).send({mssage: 'Category created successful'});
+            //     }).catch(err => {
+            //         // console.log("Errorrrrrrrrrr", err);
+            //         res.send({ error: true, message: 'failed to add data' });
+            //     });
+            // } else {
+            //     return res.send({error: true, code: 404, message: 'Recycler not assigned to collection center.'});
+            // }
         }
     })
 }

@@ -17,6 +17,8 @@ import {
     fetch_all_users,
     fetch_collection_center_byId,
     fetch_logewaste_weight_by_recyclers,
+    fetch_recyclers_and_colection_center,
+    find_all_collection_center,
     new_category, 
     new_sub_cateory,
     reg_user_erpon,
@@ -51,6 +53,9 @@ router.get('/admin_users', fetch_all_admin_users);
 router.patch('/unblock_user/:id', unblock_user);
 router.patch('/block_user/:id', block_user);
 
+
+router.get('/all_collection_center', find_all_collection_center);
+router.get('/fetch-recycler-with-collection-centers/:collection_center/:recycler_id', fetch_recyclers_and_colection_center);
 router.get('/fetch_one_center_byid/:id', fetch_collection_center_byId);
 router.patch('/asign_recycler', asign_recycler_to_collection_center);
 router.patch('/remove_recycler', remove_recycler_to_collection_center);
@@ -58,6 +63,8 @@ router.patch('/remove_recycler', remove_recycler_to_collection_center);
 router.get('/all_accepted_requests', fetch_all_pickups_accepted);
 router.get('/recyclers-logged-waste-weight', fetch_logewaste_weight_by_recyclers);
 
+
+// Look at this again
 router.patch('/asign_center_to_recycler', asign_collection_center_to_recyclers);
 router.patch('/remove_collection_center', remove_collection_center_recycler_user);
 

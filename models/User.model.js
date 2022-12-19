@@ -22,7 +22,7 @@ let newUser = new Schema({
     },
     collection_center: [{
         type: Schema.Types.ObjectId,
-        ref:'CollectionCenter',
+        ref:'User',
     }],
     country: {
         type: String,

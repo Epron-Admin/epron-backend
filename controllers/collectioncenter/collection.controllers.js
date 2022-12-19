@@ -1,5 +1,5 @@
 
-import Collection from '../../models/CollectionCenter.model.js';
+// import Collection from '../../models/CollectionCenter.model.js';
 import User from '../../models/User.model.js'
 import Ewaste from '../../models/Ewaste.model.js';
 import Types from '../../models/CategoryTypes.model.js';
@@ -7,51 +7,51 @@ import RequestPickup from '../../models/RequestPickup.model.js';
 import console from 'console';
 
  
-export const new_collection_ceneter = (req, res) => {
-    if ((!req.body.name) ||
-       (!req.body.address) ||
-       (!req.body.user_id) ||
-       (!req.body.lga) ||
-       (!req.body.lat) ||
-       (!req.body.long)
-    ) 
-    {
-        // console.log("All not filled");
-        return res.status(401).send({error: true, message: "Name, address, lga, lat, long, user_id are required"});
-    } 
-    let collection = new Collection({
-        name: req.body.name,
-        address: req.body.address,
-        user_id: req.body.user_id,
-        lga: req.body.lga,
-        lat: req.body.lat,
-        long: req.body.long,
-        created_at: Date.now(),
-        updated_at: Date.now()
+// export const new_collection_ceneter = (req, res) => {
+//     if ((!req.body.name) ||
+//        (!req.body.address) ||
+//        (!req.body.user_id) ||
+//        (!req.body.lga) ||
+//        (!req.body.lat) ||
+//        (!req.body.long)
+//     ) 
+//     {
+//         // console.log("All not filled");
+//         return res.status(401).send({error: true, message: "Name, address, lga, lat, long, user_id are required"});
+//     } 
+//     let collection = new Collection({
+//         name: req.body.name,
+//         address: req.body.address,
+//         user_id: req.body.user_id,
+//         lga: req.body.lga,
+//         lat: req.body.lat,
+//         long: req.body.long,
+//         created_at: Date.now(),
+//         updated_at: Date.now()
 
-    });
-    collection.save().then(result => {
-        res.json({error: false, code: 201, status: 'success', message: 'collection center added successfully', 'collection_centers': result });
-    }).catch(err => {
-        // console.log(err);
-        res.send({ error: true, message: 'failed to add data' });
-    });
-}
+//     });
+//     collection.save().then(result => {
+//         res.json({error: false, code: 201, status: 'success', message: 'collection center added successfully', 'collection_centers': result });
+//     }).catch(err => {
+//         // console.log(err);
+//         res.send({ error: true, message: 'failed to add data' });
+//     });
+// }
 
-export const fetch_all_collection_centers = (req, res) => {
-    Collection.find({}).populate('user_id').sort('-created_at').exec((err, collection) => {
-        if (err) {
-            console.log(err);
-            return res.send({error: true, code: 401, message: "Failed to fecth your collecton centers"});
-            // return res.send(err);
-        }
-        return res.json({error: false, code: 201, status: 'success', message: 'fetch all categories', centers: collection });
-        // res.send(category);
-    });
-}
+// export const fetch_all_collection_centers = (req, res) => {
+//     Collection.find({}).populate('user_id').sort('-created_at').exec((err, collection) => {
+//         if (err) {
+//             console.log(err);
+//             return res.send({error: true, code: 401, message: "Failed to fecth your collecton centers"});
+//             // return res.send(err);
+//         }
+//         return res.json({error: false, code: 201, status: 'success', message: 'fetch all categories', centers: collection });
+//         // res.send(category);
+//     });
+// }
 
 export const fetch_collection_centers_by_userid = (req, res) => {
-    Collection.find({user_id: req.params.id}).populate('user_id').sort('-created_at').exec((err, centers) => {
+    User.findById({_id: req.params.id}).sort('-created_at').exec((err, centers) => {
         if (err) {
             console.log(err);
             return res.send(err);
@@ -61,61 +61,61 @@ export const fetch_collection_centers_by_userid = (req, res) => {
     });
 }
 
-export const remove_collection_center = (req, res) => {
-    Collection.findByIdAndRemove({ _id: req.params.id }, (err, center) => {
-        if (err) {
-            return res.json({error: true, status: 401, message: "failed to delete collection center"});
-        }
-        else {
-            return res.json({error: false, status: 201, message: "success!" });
-        }
-    });
-}
+// export const remove_collection_center = (req, res) => {
+//     Collection.findByIdAndRemove({ _id: req.params.id }, (err, center) => {
+//         if (err) {
+//             return res.json({error: true, status: 401, message: "failed to delete collection center"});
+//         }
+//         else {
+//             return res.json({error: false, status: 201, message: "success!" });
+//         }
+//     });
+// }
 
-export const update_center = (req, res) => {
-    let ton_weight = '';
-    if ((!req.body.name) ||
-        (!req.body.address) ||
-        // (!req.body.user_id) ||
-        (!req.body.lga) ||
-        (!req.body.lat) ||
-        (!req.body.long)
-    ) 
-    {
-     // console.log("All not filled");
-     return res.status(401).send({error: true, message: "Name, address, lga, lat and long are required"});
-    }
-    Collection.findById({_id: req.params.id}, (err, center) => {
-        if (err) {
-            res.send({code: 505, error: true, err: err, message: 'error occured' });
-            console.log(err);
-        }
-        if (!center)
-            res.send({code: 404, error: true, message: 'Can not find collection center' });
-            // return next(new Error('Could not load document'));
-        else {
-            // console.log('The user', user);
-            // console.log('the body', req.body);
+// export const update_center = (req, res) => {
+//     let ton_weight = '';
+//     if ((!req.body.name) ||
+//         (!req.body.address) ||
+//         // (!req.body.user_id) ||
+//         (!req.body.lga) ||
+//         (!req.body.lat) ||
+//         (!req.body.long)
+//     ) 
+//     {
+//      // console.log("All not filled");
+//      return res.status(401).send({error: true, message: "Name, address, lga, lat and long are required"});
+//     }
+//     Collection.findById({_id: req.params.id}, (err, center) => {
+//         if (err) {
+//             res.send({code: 505, error: true, err: err, message: 'error occured' });
+//             console.log(err);
+//         }
+//         if (!center)
+//             res.send({code: 404, error: true, message: 'Can not find collection center' });
+//             // return next(new Error('Could not load document'));
+//         else {
+//             // console.log('The user', user);
+//             // console.log('the body', req.body);
 
-            center.name = req.body.name,
-            center.address = req.body.address,
-            // center.user_id = req.body.user_id,
-            center.lga = req.body.lga,
-            center.lat = req.body.lat,
-            center.long = req.body.long,
-            center.updated_at = Date.now()
+//             center.name = req.body.name,
+//             center.address = req.body.address,
+//             // center.user_id = req.body.user_id,
+//             center.lga = req.body.lga,
+//             center.lat = req.body.lat,
+//             center.long = req.body.long,
+//             center.updated_at = Date.now()
 
 
-            center.save().then(result => {
-                res.json({ error: false, code: 200, status: 'success', 'collection center  ': result });
-                //res.status(200).send({mssage: 'update successful'});
-            }).catch(err => {
-                console.log(err.code);
-                res.send({ error: true, message: 'failed to update collection' });
-            });
-        }
-    });
-}
+//             center.save().then(result => {
+//                 res.json({ error: false, code: 200, status: 'success', 'collection center  ': result });
+//                 //res.status(200).send({mssage: 'update successful'});
+//             }).catch(err => {
+//                 console.log(err.code);
+//                 res.send({ error: true, message: 'failed to update collection' });
+//             });
+//         }
+//     });
+// }
 
 export const log_single_ewaste = async (req, res) => {
     if (
@@ -132,7 +132,7 @@ export const log_single_ewaste = async (req, res) => {
         return res.status(401).send({error: true, message: "Category_id, price, unit, type, quantity, weight and user_id are required"});
     } 
 
-    await User.findById({_id: req.body.user_id}).exec((err, user) => {
+    await User.findById({_id: req.body.user_id, role: 'collector'}).exec((err, user) => {
         if (err) {
             console.log(err);
             return res.send(err);

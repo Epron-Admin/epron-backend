@@ -63,7 +63,6 @@ export const get_customers = (req, res) => {
 }; 
   
 export const initialize_transanction = (req, res) => {
-    console.log('trans', req.body);
     paystack.transaction.initialize({
         email: req.body.email,
         amount: Number(req.body.amount) * 100
@@ -76,6 +75,16 @@ export const initialize_transanction = (req, res) => {
         // console.log(err);
     })
 }
+
+// export const find_orders = (req, res) => {
+//     console.log({reference: req.query.reference});
+//     Order.find({reference: req.query.reference}).exec((err, order) => {
+//          if (err) {
+//             console.log(err);
+//         }
+//         return res.send(order);
+//     });
+// }
 
 
 export const user_profile = (req, res) => {
@@ -210,6 +219,7 @@ export const find_user_byid = async (req, res) => {
         return res.json({error: false, status: 201, user: user, message: "successful!" });
     });
 }
+
 
 export const find_collection_center_by_location = async (req, res) => {
     
@@ -773,15 +783,6 @@ export const bulk_log_upload3 = async (req, res, next) => {
      });
 };
 
-export const find_orders = (req, res) => {
-    console.log({reference: req.query.reference});
-    Order.find({reference: req.query.reference}).exec((err, order) => {
-         if (err) {
-            console.log(err);
-        }
-        return res.send(order);
-    });
-}
 
 
 

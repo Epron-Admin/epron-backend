@@ -1,7 +1,7 @@
 
 import User from '../../models/User.model.js';
 import Fake from '../../models/FakeUser.model.js';
-import Collection from '../../models/CollectionCenter.model.js';
+// import Collection from '../../models/CollectionCenter.model.js';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
@@ -87,18 +87,18 @@ export const reg_userx = (req, res) => {
                         user.save(function (err) {
                             done(err, token, user);
                         });
-                        if (req.body.role === 'collector') {
-                            let collector = new Collection({
-                                user_id: user._id,
+                        // if (req.body.role === 'collector') {
+                        //     let collector = new Collection({
+                        //         user_id: user._id,
                                 
-                            });
-                            collector.save().then((result) => {
-                                // console.log("resilt of center", result);
-                            }).catch(err => {
-                                // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
-                                return res.send({error: true, code: 401, message: "Failed to add new user to center"});
-                            });
-                        }
+                        //     });
+                        //     collector.save().then((result) => {
+                        //         // console.log("resilt of center", result);
+                        //     }).catch(err => {
+                        //         // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+                        //         return res.send({error: true, code: 401, message: "Failed to add new user to center"});
+                        //     });
+                        // }
                     });
                 },
                 (token, user, done) => {

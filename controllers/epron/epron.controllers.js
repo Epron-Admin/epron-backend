@@ -7,7 +7,7 @@ import console from 'console';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import async from 'async';
-import Collection from '../../models/CollectionCenter.model.js';
+// import Collection from '../../models/CollectionCenter.model.js';
 import RequestPickup from '../../models/RequestPickup.model.js';
 import RecyclerWaste from '../../models/RecyclerWaste.model.js'
 
@@ -598,6 +598,42 @@ export const fetch_all_pickups_accepted = async (req, res) => {
     });
 }
 
+export const find_all_collection_center = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+    const total_centers = await User.countDocuments({role: 'collector'}).exec();
+
+    if (endIndex <  await User.countDocuments({role: 'collector'}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    
+    User.find({ role: 'collector' }).sort('-created_at').limit(limit).skip(startIndex).exec((err, user) => {
+        if (err) {
+            console.log(err);
+            return res.json({error: true, status: 401, message: "Error occured"})
+        }
+        if (!user) {
+            console.log(err);
+            return res.json({error: true, status: 404, message: "User not found"})
+        }
+        
+        return res.json({error: false, status: 201, pagination: results, total_users: total_centers, user: user, message: "successful!" });
+    });
+}
+
 
 
 export const fetch_logewaste_weight_by_recyclers = async (req, res) => {
@@ -670,7 +706,7 @@ export const asign_collection_center_to_recyclers = (req, res) => {
                     res.send({ error: true, message: 'failed to asign collection center' });
                 });
             } else {
-                res.send({ error: true, message: 'collection center already asigned to this recycer' });
+                res.send({ error: true, message: 'collection center already asigned to this recycler' });
             }
         }
         
@@ -711,12 +747,43 @@ export const remove_collection_center_recycler_user = (req, res) => {
                     res.send({ error: true, message: 'failed to asign Collection center' });
                 });
             } else {
-                res.send({ error: true, code: 401, message: 'collection center was not asined to this user' });
+                res.send({ error: true, code: 401, message: 'collection center was not asigned to this user' });
             }
             
         }
         
     })
+}
+
+
+export const fetch_recyclers_and_colection_center = (req, res) => {
+    //  the user_id is the id of the user which is a collection center or collector while signing up
+    if (
+        (!req.params.collection_center) ||
+        (!req.params.recycler_id)
+    ) {
+        return res.status(401).send({error: true, message: "Collection center ID and recycler ID are required"});
+    }
+    User.findById({_id: req.params.recycler_id}).populate('collection_center').exec((err, user) => {
+        console.log("user", user)
+        if (err) {
+            return res.json({error: true, status: 401, message: "An error occured"});
+        }
+        if (!user) {
+            res.send({code: 404, error: true, message: 'Can not find user' });
+        }
+        if (user.role != 'recycler') {
+            res.send({code: 401, error: true, message: 'user not a recycler' });
+        }
+        if ( user.collection_center.length <= 0 ) {
+            res.send({error: true, message: 'user not asigned a collection center' });
+        }
+        else {
+        
+            res.send({ error: true, data: user, message: 'success!' });
+        }
+        
+    });
 }
 
 
