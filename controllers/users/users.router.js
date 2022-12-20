@@ -26,7 +26,8 @@ import {
 		find_user_by_role,
 		find_user_byid,
 		find_collection_center_by_location,
-		initialize_transanction
+		initialize_transanction,
+		update_payment_option
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -71,7 +72,7 @@ router.get('/collection_by_location/:lga', find_collection_center_by_location);
 // paystck payment
 router.get('/customers', get_customers);
 router.post('/init-transaction', initialize_transanction);
-// router.post('/order', create_order);
+router.patch('/update-payment-status/:pin', update_payment_option);
 
 
 

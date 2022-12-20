@@ -76,15 +76,24 @@ export const initialize_transanction = (req, res) => {
     })
 }
 
-// export const find_orders = (req, res) => {
-//     console.log({reference: req.query.reference});
-//     Order.find({reference: req.query.reference}).exec((err, order) => {
-//          if (err) {
-//             console.log(err);
-//         }
-//         return res.send(order);
-//     });
-// }
+export const update_payment_option = (req, res) => {
+    Log.find({equipment_pin: req.params.pin}).exec((err, log) => {
+        if (err) {
+            return res.json({error: true, status: 401, message: "An error occured" });
+        }
+        if (!log) {
+            return res.json({error: true, status: 404, message: "can not find logged equipment with that equipment pin" });
+        }
+        else {
+            log[0].paid = true;
+            log[0].save().then(result => {
+                return res.json({error: false, status: 201, message: "Payment done!" });
+            }).catch(err => {
+                return res.json({error: true, status: 401, message: "Could not update logged payment status" });
+            });
+        }
+    });
+}
 
 
 export const user_profile = (req, res) => {
@@ -254,7 +263,7 @@ export const forgot_password = (req, res, next) => {
         (token, done) => {
             User.findOne({ email: req.body.email }, (err, user) => {
                let userEmail = req.body.email;
-                console.log('email', userEmail);
+                // console.log('email', userEmail);
                 if (!user) {
                     // req.flash('error', 'No account with that email address exists.');
                     // return next(new Error('No account with that email address exists.'));
@@ -270,22 +279,52 @@ export const forgot_password = (req, res, next) => {
             });
         },
         (token, user, done) => {
-          const data = {
-          from: 'Epron Admin <epron@gmail.com>',
-          to: req.body.email,
-          subject: 'Password reset',
-          text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epron.netlify.app/users/password-reset/' + token + '\n\n' +
-                        'If you did not request this, please ignore this email and your password will remain unchanged'
-        };
-
-        mailgun.messages().send(data, (error, body) => {
-            if (error) {
-                console.log(error);
-                res.send({error});
-            }
-            console.log('Mailgun body', body);
-            res.json({error: false, message: 'Token sent to your email', status: 'success', code: 201});
+            let mailTransporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'charlesamos003@gmail.com',
+                    pass: 'xwytgfmmdpdnbajp'
+                }
             });
+
+            let mailDetails = {
+                from: 'Epron Admin <empron@gmail.com>',
+                to: req.body.email,
+                subject: 'Reset your password',
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epron.netlify.app/users/password-reset/' + token + '\n\n' +
+                'If you did not request this, please ignore this email and your password will remain unchanged'
+            };
+            mailTransporter.sendMail(mailDetails, function(err, data) {
+                // console.log("Dattttttttttttaaaaaaaa", data);
+                if(err) {
+                    // console.log('Error Occurs', err);
+                    return res.send({error: true, code: 401, message: "Failed to reset user password"});
+                } else {
+                    // console.log('Email sent successfully');
+                    return res.json({error: false, code: 201, status: 'success', message: 'Token sent to your email'});
+                }
+            });
+
+
+            
+
+
+            // const data = {
+            // from: 'Epron Admin <epron@gmail.com>',
+            // to: req.body.email,
+            // subject: 'Password reset',
+            // text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epron.netlify.app/users/password-reset/' + token + '\n\n' +
+            //             'If you did not request this, please ignore this email and your password will remain unchanged'
+            // };
+
+            // mailgun.messages().send(data, (error, body) => {
+            // if (error) {
+            //     console.log(error);
+            //     res.send({error});
+            // }
+            // console.log('Mailgun body', body);
+            // res.json({error: false, message: 'Token sent to your email', status: 'success', code: 201});
+            // });
         }
     ]).catch(err => {
          console.log(err);
@@ -311,24 +350,52 @@ export const password_reset = (req, res, next) => {
                 }
                 if (req.body.password === req.body.confirmPassword) {
                     const newPassword = bcrypt.hashSync(req.body.password, 10);
-                        User.findByIdAndUpdate(user._id, { password: newPassword, resetPasswordToken: undefined, resetPasswordExpires: undefined }, (err, data) => {
+                        User.findByIdAndUpdate(user._id, { password: newPassword, resetPasswordToken: undefined, resetPasswordExpires: undefined }, (error, data) => {
                             // res.json({ 'user': data });
-                            const data2 = {
-                              from: 'Epron Admin <epron@gmail.com>',
-                              to: user.email,
-                              subject: 'Your password has been changed',
-                              text: 'Hello,\n\n' + ' This is a confirmation that the password for your accout ' + user.email + ' has just been changed'
+
+                            let mailTransporter = nodemailer.createTransport({
+                                service: 'gmail',
+                                auth: {
+                                    user: 'charlesamos003@gmail.com',
+                                    pass: 'xwytgfmmdpdnbajp'
+                                }
+                            });
+                            let mailDetails = {
+                                from: 'Epron Admin <empron@gmail.com>',
+                                to: req.body.email,
+                                subject: 'Password has been changed',
+                                text: 'Hello,\n\n' + ' This is a confirmation that the password for your accout ' + user.email + ' has just been changed'
                             };
-                            mailgun.messages().send(data2, (error, body) => {
-                        if (error) {
-                            console.log(error);
-                           return res.json({errr: true, error, message: 'An error occured while sending you a mail'});
-                        }
-                             // console.log('Mailgun body', body);
-                            // res.json({body, 'user': data});
-                            res.json({error: false, message: 'Password reset successful'});
-                        });
-                        // done(user);
+
+                            mailTransporter.sendMail(mailDetails, function(err, data) {
+                                // console.log("Dattttttttttttaaaaaaaa", data);
+                                if(err) {
+                                    // console.log('Error Occurs', err);
+                                    return res.send({error: true, code: 401, message: "Failed to reset user password"});
+                                } else {
+                                    // console.log('Email sent successfully');
+                                    return res.json({error: false, code: 201, status: 'success', message: 'Password reset successful'});
+                                }
+                            });
+
+
+
+                            // const data2 = {
+                            //   from: 'Epron Admin <epron@gmail.com>',
+                            //   to: user.email,
+                            //   subject: 'Your password has been changed',
+                            //   text: 'Hello,\n\n' + ' This is a confirmation that the password for your accout ' + user.email + ' has just been changed'
+                            // };
+                            // mailgun.messages().send(data2, (error, body) => {
+                            // if (error) {
+                            //     console.log(error);
+                            // return res.json({errr: true, error, message: 'An error occured while sending you a mail'});
+                            // }
+                            // // console.log('Mailgun body', body);
+                            // // res.json({body, 'user': data});
+                            // res.json({error: false, message: 'Password reset successful'});
+                            // });
+                            // // done(user);
                     });
                 } else {
                     // req.flash('error', 'Passwords do not match.');
@@ -495,7 +562,7 @@ export const log_equiptment = async (req, res) => {
                 unit: req.body.unit,
                 unit_weight: req.body.weight,
                 user_id: req.body.user_id,
-                ewaste_pin: pin,
+                equipment_pin: pin,
                 created_at: Date.now(),
                 updated_at: Date.now()
         
