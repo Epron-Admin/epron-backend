@@ -291,7 +291,7 @@ export const forgot_password = (req, res, next) => {
                 from: 'Epron Admin <empron@gmail.com>',
                 to: req.body.email,
                 subject: 'Reset your password',
-                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epron.netlify.app/users/password-reset/' + token + '\n\n' +
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epron.netlify.app/users/reset-reset/' + token + '\n\n' +
                 'If you did not request this, please ignore this email and your password will remain unchanged'
             };
             mailTransporter.sendMail(mailDetails, function(err, data) {
