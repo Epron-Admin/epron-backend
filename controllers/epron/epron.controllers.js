@@ -10,10 +10,14 @@ import async from 'async';
 // import Collection from '../../models/CollectionCenter.model.js';
 import RequestPickup from '../../models/RequestPickup.model.js';
 import RecyclerWaste from '../../models/RecyclerWaste.model.js'
+import Log from '../../models/Log.model.js';
 
-import Fake from '../../models/FakeUser.model.js'; // remove this import
+// import Fake from '../../models/FakeUser.model.js'; // remove this import
 
 
+// var logged_eqiupment_weight;
+
+let bigshit;
  
 
 
@@ -786,6 +790,91 @@ export const fetch_recyclers_and_colection_center = (req, res) => {
     });
 }
 
+export const approved_documents_oem = (req, res) => {
+    User.findById({_id: req.params.id, role: 'manufacturer'}).exec((err, user) => {
+        if (err) {
+            return res.status(401).send({error: true, message: "Error occurred"});
+        }
+        if (!user) {
+            return res.status(404).send({error: true, message: "User not found"});
+        }
+        if (user.approved_documents === true) {
+            return res.status(401).send({error: true, message: "Documents already approved"});
+        }
+        user.approved_documents = true;
+        user.save().then(result => {
+            res.json({ error: false, code: 200, status: 'success', message: 'documents approved'});
+        }).catch(err => {
+            // console.log(err.code);
+            res.send({ error: true, err: err, message: 'server error, failed to approve document' });
+        });
+    });
+}
+export const disapprove_documents_oem = (req, res) => {
+    User.findById({_id: req.params.id, role: 'manufacturer'}).exec((err, user) => {
+        if (err) {
+            return res.status(401).send({error: true, message: "Error occurred"});
+        }
+        if (!user) {
+            return res.status(404).send({error: true, message: "User not found"});
+        }
+        if (user.approved_documents === false) {
+            return res.status(401).send({error: true, message: "No documents approved yet"});
+        }
+        user.approved_documents = false;
+        user.save().then(result => {
+            res.json({ error: false, code: 200, status: 'success', message: 'documents approval reversed'});
+        }).catch(err => {
+            // console.log(err.code);
+            res.send({ error: true, err: err, message: 'server error, failed to disapprove document' });
+        });
+    });
+}
+
+export const dashboard_counts = async (req, res) => {
+    Log.find({}).exec((err, equipment) => {
+        if (err) {
+            return res.status(401).send({error: true, message: "Error occurred while feching manufacturer logged equipment"});
+        }
+        let logged_eqiupment_weight = equipment.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.weight;
+        }, 0);
+        Ewaste.find({}).exec((err, waste, next) => {
+            if (err) {
+                return res.status(401).send({error: true, message: "Error occurred while feching collection center logged ewaste"});
+            }
+            let logged_collection_center_waste_weight = waste.reduce(function (previousValue, currentValue) {
+                return previousValue + currentValue.weight;
+            }, 0);
+        
+            RecyclerWaste.find({}).exec(async (err, recycler_waste) => {
+                if (err) {
+                    return res.status(401).send({error: true, message: "Error occurred while feching reycler logged ewaste"});
+                }
+                let logged_recycler_waste_weight = recycler_waste.reduce((previousValue, currentValue) => {
+                    return previousValue + currentValue.weight;
+                }, 0);
+
+                const recyclers = await User.countDocuments({role: 'recycler'}).exec();
+                const manufacturers = await User.countDocuments({role: 'manufacturer'}).exec();
+                const collectors = await User.countDocuments({role: 'collector'}).exec();
+
+                let data = {
+                    recyclers: recyclers,
+                    manufacturers: manufacturers,
+                    collectors: collectors,
+                    manufacturers_logged_ewaste_weight: Math.round(logged_eqiupment_weight),
+                    collection_centers_logged_ewaste_weight: Math.round(logged_collection_center_waste_weight),
+                    recyclers_logged_ewaste_weight: Math.round(logged_recycler_waste_weight)
+                }
+
+
+                res.json({ error: false, code: 200, status: 'success', data});
+            });
+        });
+    });
+}
+
 
 // export const fetch_sub_categories = (res, req) => {
 //     Category.find({visibility: true}).populate('category').exec((err, types) => {
@@ -797,6 +886,7 @@ export const fetch_recyclers_and_colection_center = (req, res) => {
 
 //     });
 // }
+
 
 
 

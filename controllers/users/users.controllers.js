@@ -40,9 +40,8 @@ import Mailgun from 'mailgun-js';
 import console from 'console';
 import { type } from 'os';
 
-const mailgun = new Mailgun({apiKey: API_KEY, domain: DOMAIN});
+// const mailgun = new Mailgun({apiKey: API_KEY, domain: DOMAIN});
 
-let userEmail;
 // const app = express();
 // app.use(upload.array());
 

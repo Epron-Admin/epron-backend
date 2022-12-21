@@ -68,6 +68,10 @@ let newUser = new Schema({
         type: Boolean,
         default: false
     },
+    approved_documents: {
+        type: Boolean,
+        default: false
+    },
     password: {
         type: String,
         required: true
