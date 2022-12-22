@@ -72,7 +72,7 @@ router.get('/collection_by_location/:lga', find_collection_center_by_location);
 // paystck payment
 router.get('/customers', get_customers);
 router.post('/init-transaction', initialize_transanction);
-router.patch('/update-payment-status/:pin', update_payment_option);
+router.patch('/update-payment-status/:pin/:ref', update_payment_option);
 
 
 

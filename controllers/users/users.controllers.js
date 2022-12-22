@@ -85,6 +85,7 @@ export const update_payment_option = (req, res) => {
         }
         else {
             log[0].paid = true;
+            log[0].reference = req.params.ref;
             log[0].save().then(result => {
                 return res.json({error: false, status: 201, message: "Payment done!" });
             }).catch(err => {
@@ -597,13 +598,13 @@ export const update_logged_equipment = async (req, res) => {
         if (err) {
             console.log(err);
         }
-        // if (log.paid === true) {
-        // return res.status(401).send({error: true, message: "you can not update this log"});
-        // }
         if (!log) {
             // return next(new Error('Could not find logged eqiupment'));
             return res.status(404).send({error: true, message: "Could not find logged eqiupment"});
-        }   
+        } 
+        if (log.paid === true) {
+        return res.status(401).send({error: true, message: "you can not update this logged eqiupment"});
+        }  
         else {
 
             Types.findById({ _id: req.body.sub_category_id }).exec((err, type) => {

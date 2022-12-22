@@ -63,6 +63,9 @@ let logEquipment = new Schema({
         type: Boolean,
         default: false,
     },
+    reference: {
+        type: String,
+    },
     ready_pickup: {
         type: Boolean,
         default: false,
