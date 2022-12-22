@@ -121,7 +121,7 @@ export const log_single_ewaste = async (req, res) => {
     if (
         (!req.body.category_id) ||
         // (!req.body.category_name) ||
-        (!req.body.price) ||
+        // (!req.body.price) ||
         (!req.body.sub_category_id) ||
         // (!req.body.sub_category_name) ||
         (!req.body.quantity) ||
@@ -129,7 +129,7 @@ export const log_single_ewaste = async (req, res) => {
         (!req.body.unit) ||
         (!req.body.user_id)
         ) {
-        return res.status(401).send({error: true, message: "Category_id, price, unit, type, quantity, weight and user_id are required"});
+        return res.status(401).send({error: true, message: "Category_id, unit, type, quantity, weight and user_id are required"});
     } 
 
     await User.findById({_id: req.body.user_id, role: 'collector'}).exec((err, user) => {
@@ -148,8 +148,8 @@ export const log_single_ewaste = async (req, res) => {
                 console.log(err);
                 return res.json({error: true, status: 401, message: "Failed fetch types"})
             }
-            if (req.body.price != type.price) {
-                return res.json({error: true, status: 401, message: "The type price does not match" });
+            if (!type) {
+                return res.json({error: true, status: 404, message: "Sub category not found" });
             }
             
             // note the weight is measured in tonage or ton, after the aggregation from the unit.

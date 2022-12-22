@@ -87,11 +87,34 @@ export const update_payment_option = (req, res) => {
             log[0].paid = true;
             log[0].reference = req.params.ref;
             log[0].save().then(result => {
-                return res.json({error: false, status: 201, message: "Payment done!" });
+                return res.json({error: false, status: 201, message: "Payment updated successfully!" });
             }).catch(err => {
                 return res.json({error: true, status: 401, message: "Could not update logged payment status" });
             });
         }
+    });
+}
+
+
+// When payment has to be updated on more than one record.
+export const update_multiple_payment_options = (req, res) => {
+    Log.updateMany({equipment_pin: req.params.pin}).exec((err, log) => {
+        console.log("many recoreds", log)
+        if (err) {
+            return res.json({error: true, status: 401, message: "An error occured" });
+        }
+        if (!log) {
+            return res.json({error: true, status: 404, message: "can not find logged equipment with that equipment pin" });
+        }
+        // else {
+        //     log[0].paid = true;
+        //     log[0].reference = req.params.ref;
+        //     log[0].save().then(result => {
+        //         return res.json({error: false, status: 201, message: "Payment done!" });
+        //     }).catch(err => {
+        //         return res.json({error: true, status: 401, message: "Could not update logged payment status" });
+        //     });
+        // }
     });
 }
 
@@ -510,20 +533,23 @@ export const change_password = (req, res) => {
 export const log_equiptment = async (req, res) => {
     if (
         (!req.body.category_id) ||
-        (!req.body.price) ||
+        // (!req.body.price) ||
         (!req.body.sub_category_id) ||
         (!req.body.quantity) ||
         (!req.body.weight) ||
         (!req.body.unit) ||
         (!req.body.user_id)
         ) {
-        return res.status(401).send({error: true, message: "Category_id, price, unit, type, quantity, weight and user_id are required"});
+        return res.status(401).send({error: true, message: "Category_id, unit, type, quantity, weight and user_id are required"});
     } 
 
-    await User.findById({_id: req.body.user_id}).exec((err, user) => {
+    User.findById({_id: req.body.user_id}).exec((err, user) => {
         if (err) {
-            console.log(err);
+            // console.log(err);
             return res.send(err);
+        }
+        if (!user) {
+            return res.status(404).send({error: true, message: "User not found"});;
         }
 
         if (user.role != 'manufacturer') {
@@ -532,12 +558,14 @@ export const log_equiptment = async (req, res) => {
         else {
             let ton_weight;
             Types.findById({ _id: req.body.sub_category_id }).exec((err, type) => {
+                console.log("Sub category", type)
                 if (err) {
-                    console.log(err);
+                    // console.log(err);
                     return res.json({error: true, status: 401, message: "Failed fetch types"})
                 }
-                if (req.body.price != type.price) {
-                    return res.json({error: true, status: 401, message: "The type price does not match" });
+                if (!type) {
+                    // console.log(err);
+                    return res.json({error: true, status: 404, message: "Sub category not found"});
                 }
                 
                 // note the weight is measured in tonage or ton, after the aggregation from the unit.

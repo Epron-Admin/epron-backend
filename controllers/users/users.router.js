@@ -27,7 +27,8 @@ import {
 		find_user_byid,
 		find_collection_center_by_location,
 		initialize_transanction,
-		update_payment_option
+		update_payment_option,
+		update_multiple_payment_options
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -62,6 +63,8 @@ router.delete('/delete-log/:id', remove_log_equipment);
 router.post('/bulk-log', bulk_log_upload);
 router.post('/bulk-log2', bulk_log_upload2);
 router.post('/bulk-log3', bulk_log_upload3);
+
+router.patch('/update-bulk-payments/:pin/:ref', update_multiple_payment_options);
 
 router.get("/find_user_by_role/:role", find_user_by_role);
 router.get("/user/:id", find_user_byid);
