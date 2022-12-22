@@ -12,6 +12,9 @@ import RequestPickup from '../../models/RequestPickup.model.js';
 import RecyclerWaste from '../../models/RecyclerWaste.model.js'
 import Log from '../../models/Log.model.js';
 
+// import querystring from 'querystring';
+// const querystring = require('querystring');
+
 // import Fake from '../../models/FakeUser.model.js'; // remove this import
 
 
@@ -360,12 +363,103 @@ export const reg_user_erpon = (req, res, next) => {
             })
         })
         .catch(err => {
-            console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
             return res.send({error: true, code: 401, message: "Failed to add new epron admin user"});
         });
     });
     
 };
+
+export const fetch_users_loged_equiptment_oem = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_equipment_logged = await Log.countDocuments({}).exec();
+    const total_number_paid = await Log.countDocuments({paid: true}).exec();
+
+    if (endIndex <  await Log.countDocuments().exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    Log.find({}).populate('category_id').populate('sub_category_id', 'user_id').populate('user_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
+        if (err) {
+            // console.log(err);
+            return res.json({error: true, status: 401, message: "Failed to fetch user logged equipment"})
+        }
+        if (!equipment) {
+            return res.json({error: true, status: 404, message: "Log equipent does not exist!"})
+        }
+        const log_weight = equipment.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.weight;
+        }, 0);
+
+        const value = equipment.filter(result => result.paid === true);
+        
+        const total_payment_made = value.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+
+        const value2 = equipment.filter(result => result.paid === false);
+        
+        const total_unpaid = value2.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+        
+        // const amount_unpaid = 
+        const number_of_unpaid = total_equipment_logged - total_number_paid;
+       
+        return res.json({error: false, status: 201, total_logged_equipment_paid: total_number_paid, unpaid_log_number: number_of_unpaid, total_payment_made: total_payment_made, unpaid_payment: total_unpaid, total_logged_eqiupment: total_equipment_logged, total_weight_logged: log_weight, pagination: results, log: equipment, message: "Fetch all logged equipments successful!" });
+    });
+}
+
+export const fetch_user_loged_equiptment_paid_status_oem = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_equipment_logged = await Log.countDocuments({paid: req.query.paid}).exec();
+    // const total_number_paid = await Log.countDocuments({user_id: req.params.id, paid: true}).exec();
+
+    if (endIndex <  await Log.countDocuments().exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    Log.find({paid: req.query.paid}).populate('category_id').populate('sub_category_id').populate('user_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
+        if (err) {
+            // console.log(err);
+            return res.json({error: true, status: 401, message: "Failed to fetch user logged equipment"})
+        }
+        if (!equipment) {
+            // console.log(err);
+            return res.json({error: true, status: 404, message: "user logged equipment not found"})
+        }
+       
+        return res.json({error: false, status: 201, total_logged_eqiupment: total_equipment_logged, pagination: results, log: equipment, message: "success" });
+    });
+}
 
 
 export const fetch_all_admin_users = async (req, res) => {
@@ -875,17 +969,59 @@ export const dashboard_counts = async (req, res) => {
     });
 }
 
-
-// export const fetch_sub_categories = (res, req) => {
-//     Category.find({visibility: true}).populate('category').exec((err, types) => {
+// Search Log equipments only user by name and email
+// export const search_logged_equipment_with_varibles = (req, res) => {
+//     console.log('Search', req.query.search);
+//     let query = { name: req.query.search };
+//     // let regex = new RegExp(query,'i');
+//     User.find({
+//         $or: [
+//         {'name': {$regex: req.query.search, $options: 'i'}},
+//         {'email': {$regex: req.query.search, $options: 'i'}},
+//         ]
+//     }).exec((err, user) => {
 //         if (err) {
 //             console.log(err);
 //             return res.send(err);
 //         }
-//         res.send(types);
-
+//         res.json(user);
+//         // console.log('search', search);
 //     });
 // }
+
+
+// Search Log equipments only user by name and email
+export const search_logged_equipment_with_varibles  = (req, res, next) => {
+    console.log('Search', req.query.search);
+
+    User.find({$text: { $search: req.query.search, $diacriticSensitive: false}}, { score: { $meta: "textScore" } }).sort( 
+        {  score: { $meta : 'textScore' } }).exec((err, user) => {
+        if (err) {
+            return res.status(401).send({error: true, message: "Error occurred while feching users"});
+        }
+        if (!user) {
+            return res.status(401).send({error: true, code: 404, message: "User not found"});
+        }
+        // console.log("User serced for", user);
+        // return res.send({error: false, message: "User searched done", user});
+
+        Log.find({ user_id: user[0]._id }).exec((err, search) => {
+        if (err) {
+            console.log(err);
+            return res.send(err);
+        }
+        res.json({search, user});
+        // console.log('search', search);
+        }),((err) => {
+            console.log(err);
+            res.send({error: true, message: 'An error while seaching logged equipment'});
+        });
+
+    })
+
+    
+}
+
 
 
 

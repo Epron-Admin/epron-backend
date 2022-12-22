@@ -107,5 +107,22 @@ newUser.methods.isValid = function(hashedpassword){
 };
 
 
+// newUser.index({
+//     name: 1,
+//     email: 1
+// });
+newUser.index({ name : 'text', email : 'text' });
+
+ // when its a nested array;
+
+// newUser.index({ 'arrayName.fieldname':'text'});
+
+// For wild card with index array
+// movieSchema.index({ "$**" : "text" })
+
+// For While card indexing
+// newUser.index({'$**': 'text'});
+
+
 
 export default mongoose.model('User', newUser);

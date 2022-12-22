@@ -79,6 +79,13 @@ let logEquipment = new Schema({
 });
 
 
+// logEquipment.index({
+//     user_id: 1,
+//     // email: 1
+// });
+
+// logEquipment.index({'$**': 'text'});
+
 
 export default mongoose.model('Log', logEquipment);
 // remember to change it to logEquipment on deployment.

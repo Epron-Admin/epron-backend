@@ -28,7 +28,8 @@ import {
 		find_collection_center_by_location,
 		initialize_transanction,
 		update_payment_option,
-		update_multiple_payment_options
+		update_multiple_payment_options,
+		fetch_user_loged_equiptment_byid_paid_status
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -57,6 +58,7 @@ router.get('/all_naija', get_naija);
 
 router.post('/log-one-equipment', log_equiptment);
 router.get('/logged_equiptment_by_user_id/:id', fetch_user_loged_equiptment_byid);
+router.get('/logged_equiptment_by_user_id_status/:id', fetch_user_loged_equiptment_byid_paid_status);
 router.get('/logged-equiptments', fetch_all_loged_equiptments);
 router.put('/update-log/:id', update_logged_equipment);
 router.delete('/delete-log/:id', remove_log_equipment);

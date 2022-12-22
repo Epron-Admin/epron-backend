@@ -21,6 +21,8 @@ import {
     fetch_collection_center_byId,
     fetch_logewaste_weight_by_recyclers,
     fetch_recyclers_and_colection_center,
+    fetch_users_loged_equiptment_oem,
+    fetch_user_loged_equiptment_paid_status_oem,
     find_all_collection_center,
     new_category, 
     new_sub_cateory,
@@ -28,6 +30,7 @@ import {
     remove_collection_center_recycler_user,
     remove_log_category,
     remove_log_type,
+    search_logged_equipment_with_varibles,
     // remove_recycler_to_collection_center,
     unblock_user,
     update_category,
@@ -55,6 +58,11 @@ router.post('/user-reg', reg_user_erpon);
 router.get('/admin_users', fetch_all_admin_users);
 router.patch('/unblock_user/:id', unblock_user);
 router.patch('/block_user/:id', block_user);
+
+router.get('/fetch-all-logged-equipments', fetch_users_loged_equiptment_oem);
+router.get('/fetch-all-logged-equipments-paid-status', fetch_user_loged_equiptment_paid_status_oem);
+
+router.get('/serach-equipments-logged', search_logged_equipment_with_varibles)
 
 
 router.get('/all_collection_center', find_all_collection_center);

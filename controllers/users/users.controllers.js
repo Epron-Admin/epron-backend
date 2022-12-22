@@ -97,8 +97,8 @@ export const update_payment_option = (req, res) => {
 
 
 // When payment has to be updated on more than one record.
-export const update_multiple_payment_options = (req, res) => {
-    Log.updateMany({equipment_pin: req.params.pin}).exec((err, log) => {
+export const update_multiple_payment_options = async (req, res) => {
+    Log.updateMany({equipment_pin: req.params.pin}, {paid: true}).exec((err, log) => {
         console.log("many recoreds", log)
         if (err) {
             return res.json({error: true, status: 401, message: "An error occured" });
@@ -106,15 +106,12 @@ export const update_multiple_payment_options = (req, res) => {
         if (!log) {
             return res.json({error: true, status: 404, message: "can not find logged equipment with that equipment pin" });
         }
-        // else {
-        //     log[0].paid = true;
-        //     log[0].reference = req.params.ref;
-        //     log[0].save().then(result => {
-        //         return res.json({error: false, status: 201, message: "Payment done!" });
-        //     }).catch(err => {
-        //         return res.json({error: true, status: 401, message: "Could not update logged payment status" });
-        //     });
-        // }
+        if (log.acknowledged != true) {
+            return res.json({error: true, status: 401, message: "could not update multiple records to paid" });
+        }
+        if (log.acknowledged === true) {
+            return res.json({error: false, status: 201, message: "Multiple records updated to paid" });
+        }
     });
 }
 
@@ -611,15 +608,15 @@ export const log_equiptment = async (req, res) => {
 export const update_logged_equipment = async (req, res) => {
     if (
         (!req.body.category_id) ||
-        (!req.body.category_name) ||
-        (!req.body.price) ||
+        // (!req.body.price) ||
         (!req.body.sub_category_id) ||
-        (!req.body.sub_category_name) ||
         (!req.body.quantity) ||
-        (!req.body.weight)
+        (!req.body.weight) ||
+        (!req.body.unit) ||
+        (!req.body.user_id)
         // (!req.body.user_id)
         ) {
-        return res.status(401).send({error: true, message: "Category_id, category_name price, type, type_name quantity, weight and are required"});
+            return res.status(401).send({error: true, message: "Category_id, unit, type, quantity, weight and user_id are required"});
     }
     Log.findById(req.params.id, (err, log) => {
         // console.log("logggggggggggg", log);
@@ -643,29 +640,35 @@ export const update_logged_equipment = async (req, res) => {
                 if (req.body.price != type.price) {
                     return res.json({error: true, status: 401, message: "The type price does not match" });
                 }
-                // res.json({error: false, status: 201, requests: type, message: "fetch all types successful!" });
-                const total = type.price *  req.body.quantity * req.body.weight;
-            // });
-
-            log.category_id = req.body.category_id,
-            log.category_name = req.body.category_name,
-            log.price = type.price,
-            log.total = total,
-            log.sub_category_id = req.body.sub_category_id,
-            log.sub_category_name = req.body.sub_category_name,
-            log.quantity = req.body.quantity,
-            log.weight = req.body.weight,
-            // log.user_id = req.body.user_id,
-            // log.equipment_pin = pin,
-            log.updated_at = Date.now()
-            // user.body.user = req.body;
-            log.save().then(result => {
-                res.status(201).json({log: result, error: false, message: "Log update successful" });
-                // res.json({ 'log': result });
-                //res.status(200).send({mssage: 'update successful'});
-            }).catch(err => {
-                console.log(err);
-                res.send({ error: true, message: 'failed to update logged equipment' });
+                
+                // note the weight is measured in tonage or ton, after the aggregation from the unit.
+                if (req.body.unit === 'kg') {
+                    ton_weight = 0.00110231 * req.body.weight;
+                }
+                if (req.body.unit === 'g') {
+                ton_weight = 0.0000011023 * req.body.weight;
+                }
+                const total = type.price * req.body.weight;
+            
+                log.category_id = req.body.category_id,
+                log.category_name = req.body.category_name,
+                log.price = type.price,
+                log.total = total,
+                log.sub_category_id = req.body.sub_category_id,
+                log.sub_category_name = req.body.sub_category_name,
+                log.quantity = req.body.quantity,
+                log.weight = req.body.weight,
+                // log.user_id = req.body.user_id,
+                // log.equipment_pin = pin,
+                log.updated_at = Date.now()
+                // user.body.user = req.body;
+                log.save().then(result => {
+                    res.status(201).json({log: result, error: false, message: "Log update successful" });
+                    // res.json({ 'log': result });
+                    //res.status(200).send({mssage: 'update successful'});
+                }).catch(err => {
+                    // console.log(err);
+                    res.send({ error: true, message: 'failed to update logged equipment' });
             });
         });
         }
@@ -681,6 +684,7 @@ export const fetch_user_loged_equiptment_byid = async (req, res) => {
     const results = {};
 
     const total_equipment_logged = await Log.countDocuments({user_id: req.params.id}).exec();
+    const total_number_paid = await Log.countDocuments({user_id: req.params.id, paid: true}).exec();
 
     if (endIndex <  await Log.countDocuments().exec()) {
         results.next = {
@@ -697,17 +701,124 @@ export const fetch_user_loged_equiptment_byid = async (req, res) => {
     }
     Log.find({user_id: req.params.id}).populate('category_id').populate('sub_category_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
         if (err) {
-            console.log(err);
+            // console.log(err);
             return res.json({error: true, status: 401, message: "Failed to fetch user logged equipment"})
+        }
+        if (!equipment) {
+            // console.log(err);
+            return res.json({error: true, status: 404, message: "user logged equipment not found"})
         }
         const log_weight = equipment.reduce(function (previousValue, currentValue) {
             return previousValue + currentValue.weight;
-          }, 0);
-        // if (equipment) {
-        //     console.log(err);
-        //     return res.json({error: true, status: 404, message: "User not found"})
-        // }
-        return res.json({error: false, status: 201, total_logged_eqiupment: total_equipment_logged, total_weight_logged: log_weight, pagination: results, log: equipment, message: "Fetch all logged equipments successful!" });
+        }, 0);
+
+        const value = equipment.filter(result => result.paid === true);
+        
+        const total_payment_made = value.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+
+        const value2 = equipment.filter(result => result.paid === false);
+        
+        const total_unpaid = value2.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+        
+        // const amount_unpaid = 
+        const number_of_unpaid = total_equipment_logged - total_number_paid;
+       
+        return res.json({error: false, status: 201, total_logged_equipment_paid: total_number_paid, unpaid_log_number: number_of_unpaid, total_payment_made: total_payment_made, unpaid_payment: total_unpaid, total_logged_eqiupment: total_equipment_logged, total_weight_logged: log_weight, pagination: results, log: equipment, message: "Fetch all logged equipments successful!" });
+    });
+}
+
+export const fetch_user_loged_equiptment_byid_paid_status = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_equipment_logged = await Log.countDocuments({user_id: req.params.id, paid: req.query.paid}).exec();
+    // const total_number_paid = await Log.countDocuments({user_id: req.params.id, paid: true}).exec();
+
+    if (endIndex <  await Log.countDocuments().exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    Log.find({user_id: req.params.id, paid: req.query.paid}).populate('category_id').populate('sub_category_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
+        if (err) {
+            // console.log(err);
+            return res.json({error: true, status: 401, message: "Failed to fetch user logged equipment"})
+        }
+        if (!equipment) {
+            // console.log(err);
+            return res.json({error: true, status: 404, message: "user logged equipment not found"})
+        }
+       
+        return res.json({error: false, status: 201, total_logged_eqiupment: total_equipment_logged, pagination: results, log: equipment, message: "success" });
+    });
+}
+
+export const fetch_user_loged_equiptment_by_payment = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    // const total_equipment_logged = await Log.countDocuments({user_id: req.params.id}).exec();
+    // const total_number_paid = await Log.countDocuments({user_id: req.params.id, paid: true}).exec();
+
+    if (endIndex <  await Log.countDocuments().exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    Log.find({user_id: req.params.id}).populate('category_id').populate('sub_category_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
+        if (err) {
+            // console.log(err);
+            return res.json({error: true, status: 401, message: "Failed to fetch user logged equipment"})
+        }
+        if (!equipment) {
+            return res.json({error: true, status: 404, message: "Log equipent does not exist!"})
+        }
+        const log_weight = equipment.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.weight;
+        }, 0);
+
+        const value = equipment.filter(result => result.paid === true);
+        
+        const total_payment_made = value.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+
+        const value2 = equipment.filter(result => result.paid === false);
+        
+        const total_unpaid = value2.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+        
+        // const amount_unpaid = 
+        const number_of_unpaid = total_equipment_logged - total_number_paid;
+       
+        return res.json({error: false, status: 201, total_logged_equipment_paid: total_number_paid, unpaid_log_number: number_of_unpaid, total_payment_made: total_payment_made, unpaid_payment: total_unpaid, total_logged_eqiupment: total_equipment_logged, total_weight_logged: log_weight, pagination: results, log: equipment, message: "Fetch all logged equipments successful!" });
     });
 }
 
