@@ -60,7 +60,7 @@ router.post('/log-one-equipment', log_equiptment);
 router.get('/logged_equiptment_by_user_id/:id', fetch_user_loged_equiptment_byid);
 router.get('/logged_equiptment_by_user_id_status/:id', fetch_user_loged_equiptment_byid_paid_status);
 router.get('/logged-equiptments', fetch_all_loged_equiptments);
-router.put('/update-log/:id', update_logged_equipment);
+router.put('/update-log-byid/:id', update_logged_equipment);
 router.delete('/delete-log/:id', remove_log_equipment);
 router.post('/bulk-log', bulk_log_upload);
 router.post('/bulk-log2', bulk_log_upload2);

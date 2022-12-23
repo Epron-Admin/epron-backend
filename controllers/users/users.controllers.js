@@ -619,26 +619,30 @@ export const update_logged_equipment = async (req, res) => {
             return res.status(401).send({error: true, message: "Category_id, unit, type, quantity, weight and user_id are required"});
     }
     Log.findById(req.params.id, (err, log) => {
-        // console.log("logggggggggggg", log);
         if (err) {
             console.log(err);
         }
         if (!log) {
             // return next(new Error('Could not find logged eqiupment'));
             return res.status(404).send({error: true, message: "Could not find logged eqiupment"});
+        }
+        if (log.user_id != req.body.user_id) {
+            // return next(new Error('Could not find logged eqiupment'));
+            return res.status(402).send({error: true, message: "You can not update this log"});
         } 
         if (log.paid === true) {
-        return res.status(401).send({error: true, message: "you can not update this logged eqiupment"});
+        return res.status(401).send({error: true, message: "you can not update this logged eqiupment, it has been paid for"});
         }  
         else {
-
+            let ton_weight;
             Types.findById({ _id: req.body.sub_category_id }).exec((err, type) => {
                 if (err) {
                     console.log(err);
                     return res.json({error: true, status: 401, message: "Failed fetch types"})
                 }
-                if (req.body.price != type.price) {
-                    return res.json({error: true, status: 401, message: "The type price does not match" });
+                if (!type) {
+                    console.log(err);
+                    return res.json({error: true, status: 404, message: "Sub category not found"})
                 }
                 
                 // note the weight is measured in tonage or ton, after the aggregation from the unit.
@@ -646,16 +650,16 @@ export const update_logged_equipment = async (req, res) => {
                     ton_weight = 0.00110231 * req.body.weight;
                 }
                 if (req.body.unit === 'g') {
-                ton_weight = 0.0000011023 * req.body.weight;
+                    ton_weight = 0.0000011023 * req.body.weight;
                 }
                 const total = type.price * req.body.weight;
             
                 log.category_id = req.body.category_id,
-                log.category_name = req.body.category_name,
+                // log.category_name = req.body.category_name,
                 log.price = type.price,
                 log.total = total,
                 log.sub_category_id = req.body.sub_category_id,
-                log.sub_category_name = req.body.sub_category_name,
+                // log.sub_category_name = req.body.sub_category_name,
                 log.quantity = req.body.quantity,
                 log.weight = req.body.weight,
                 // log.user_id = req.body.user_id,
@@ -663,7 +667,7 @@ export const update_logged_equipment = async (req, res) => {
                 log.updated_at = Date.now()
                 // user.body.user = req.body;
                 log.save().then(result => {
-                    res.status(201).json({log: result, error: false, message: "Log update successful" });
+                    res.status(201).json({error: false, message: "Log update successful" });
                     // res.json({ 'log': result });
                     //res.status(200).send({mssage: 'update successful'});
                 }).catch(err => {
