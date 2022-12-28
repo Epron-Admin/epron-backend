@@ -1176,6 +1176,127 @@ export const search_logged_equipment_with_varibles  = (req, res, next) => {
 
 
 
+export const find_user_by_date_range = async (req, res) => {
+
+    let { startDate, endDate } = req.query;
+
+    if(startDate === '' || endDate === '') {
+        return res.status(400).json({
+            status:'failure',
+            message: 'Please ensure you pick two dates'
+        })
+    }
+     
+       //2. check that date is in the right format
+      //expected result: YYY-MMM-DDD
+        // console.log({ startDate, endDate});
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_users = await User.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec();
+
+    if (endIndex <  await User.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    // $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    // $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+    User.find({ 
+        created_at: {
+            $gte: new Date(new Date(startDate).setHours(0, 0, 0)),
+            $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+            //   $gte: new Date(new Date(startDate)),
+            //   $lt: new Date(new Date(endDate))
+               }
+        }).sort('-created_at').limit(limit).skip(startIndex).exec((err, users) => {
+        // console.log("users", users)
+        if (err) {
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "error occured"})
+        }
+        if (!users) {
+            return res.json({error: true, status: 404, message: "Cant not find users"})
+        }
+        return res.json({error: false, status: 201, total_users: total_users, pagination: results, users: users, message: "success!" });
+    });
+}
+
+export const find_user_by_specific_date = async (req, res) => {
+
+    let { actualDate } = req.query;
+
+    if(actualDate === '') {
+        return res.status(400).json({
+            status:'failure',
+            message: 'Please ensure you pick a dates'
+        })
+    }
+     
+       //2. check that date is in the right format
+      //expected result: YYY-MMM-DDD
+        // console.log({ actualDate});
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_users = await User.countDocuments({created_at: actualDate}).exec();
+
+    if (endIndex <  await User.countDocuments({created_at: actualDate}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    // $gte: new Date(2012, 7, 14), 
+    // $lt: new Date(2012, 7, 15)
+
+    // $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    // $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+    User.find({ 
+        created_at: 
+        {
+            // new Date(actualDate)
+            $gte: new Date(actualDate),
+            $lt: new Date(actualDate)
+        }
+               
+        }).sort('-created_at').limit(limit).skip(startIndex).exec((err, users) => {
+        // console.log("users", users)
+        if (err) {
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "error occured"})
+        }
+        if (!users) {
+            return res.json({error: true, status: 404, message: "Cant not find users"})
+        }
+        return res.json({error: false, status: 201, total_users: total_users, pagination: results, users: users, message: "success!" });
+    });
+}
+
+
 
 
 

@@ -26,6 +26,9 @@ import {
     fetch_user_loged_equiptment_paid_status_oem,
     find_all_collection_center,
     find_all_user_based_on_verified_status,
+    // find_user_by_date,
+    find_user_by_date_range,
+    find_user_by_specific_date,
     new_category, 
     new_sub_cateory,
     reg_user_erpon,
@@ -61,6 +64,9 @@ router.post('/user-reg', reg_user_erpon);
 router.get('/admin_users', fetch_all_admin_users);
 router.patch('/unblock_user/:id', unblock_user);
 router.patch('/block_user/:id', block_user);
+
+router.get('/filter_by_date_range', find_user_by_date_range);
+router.get('/filter_by_date', find_user_by_specific_date);
 
 router.get('/fetch-all-logged-equipments', fetch_users_loged_equiptment_oem);
 router.get('/fetch-all-logged-equipments-paid-status', fetch_user_loged_equiptment_paid_status_oem);
