@@ -631,7 +631,7 @@ export const update_logged_equipment = async (req, res) => {
             return res.status(402).send({error: true, message: "You can not update this log"});
         } 
         if (log.paid === true) {
-        return res.status(401).send({error: true, message: "you can not update this logged eqiupment, it has been paid for"});
+            return res.status(401).send({error: true, message: "you can not update this logged eqiupment, it has been paid for"});
         }  
         else {
             let ton_weight;

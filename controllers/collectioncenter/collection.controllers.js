@@ -202,8 +202,10 @@ export const fetch_ewaste_by_user = async (req, res) => {
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
     const results = {};
-
+  
     const total_ewaste_logged = await Ewaste.countDocuments({user_id: req.params.id}).exec();
+    const total_ewaste_pickedup = await Ewaste.countDocuments({user_id: req.params.id, pickedup: true}).exec();
+
 
     if (endIndex <  await Ewaste.countDocuments({user_id: req.params.id}).exec()) {
         results.next = {
@@ -226,7 +228,7 @@ export const fetch_ewaste_by_user = async (req, res) => {
         const waste_weight = waste.reduce(function (previousValue, currentValue) {
             return previousValue + currentValue.weight;
         }, 0);
-        return res.json({error: false, status: 201, total_logged_ewaste: total_ewaste_logged, total_weight_logged: waste_weight, pagination: results, ewaste: waste, message: "Fetch all logged ewaste successful!" });
+        return res.json({error: false, status: 201, total_ewaste_pickedup: total_ewaste_pickedup, total_logged_ewaste: total_ewaste_logged, total_weight_logged: waste_weight, pagination: results, ewaste: waste, message: "Fetch all logged ewaste successful!" });
     });
 }
 

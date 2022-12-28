@@ -393,7 +393,7 @@ export const fetch_users_loged_equiptment_oem = async (req, res) => {
             limit: limit
         }
     }
-    Log.find({}).populate('category_id').populate('sub_category_id', 'user_id').populate('user_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
+    Log.find({}).populate('category_id').populate('sub_category_id').populate('user_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, equipment, next) => {
         if (err) {
             // console.log(err);
             return res.json({error: true, status: 401, message: "Failed to fetch user logged equipment"})
@@ -565,7 +565,7 @@ export const fetch_all_loged_ewaste = async (req, res) => {
             limit: limit
         }
     }
-    Ewaste.find({}).sort('-created_at').populate('category_id').populate('sub_category_id').limit(limit).skip(startIndex).exec((err, ewaste, next) => {
+    Ewaste.find({}).sort('-created_at').populate('category_id').populate('sub_category_id').populate('user_id').limit(limit).skip(startIndex).exec((err, ewaste, next) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed to fetch logged equipment"})
