@@ -774,7 +774,7 @@ export const fetch_logewaste_weight_by_recyclers = async (req, res) => {
 export const asign_collection_center_to_recyclers = (req, res) => {
     //  the user_id is the id of the user which is a collection center or collector while signing up
     User.findById({_id: req.body.recycler_id}).exec((err, user) => {
-        console.log("user", user)
+        // console.log("user", user)
         if (
             (!req.body.collection_center) ||
             (!req.body.role) ||
@@ -792,20 +792,55 @@ export const asign_collection_center_to_recyclers = (req, res) => {
             res.send({code: 404, error: true, message: 'user not a recycler' });
         }
         else {
+            // collection_center is the user id of which has a role of collector.
+            User.findById({_id: req.body.collection_center, role: 'collector'}).exec((err2, center) => {
+                // console.log("collection center", center);
+                if (err2) {
+                    return res.json({error: true, status: 401, message: "An error occured in getting collection center"});
+                }
+                if (!center) {
+                    res.send({code: 404, error: true, message: 'Can not find collection center' });
+                }
+                if (center.collection_center_assigned === true) {
+                    res.send({code: 404, error: true, message: 'collection center already assigned to a recycler' });
+                } else {
+                    center.collection_center_assigned = true;
+                    center.save().then(result => {
+                        const index = user.collection_center.includes(req.body.collection_center);
+                        // console.log("index", index);
+                        if (index === false) {
+                            user.collection_center.push(req.body.collection_center);
+                            user.save().then(result => {
+                            res.json({ error: false, code: 200, status: 'success', message: 'collection center has been asigned to recycler'});
+                            }).catch(err => {
+                            // console.log(err.code);
+                                res.send({ error: true, message: 'failed to asign collection center' });
+                            });
+                        } else {
+                            res.send({ error: true, message: 'collection center already asigned to this recycler' });
+                        }
+                    }).catch(err => {
+                            // console.log(err.code);
+                        res.send({ error: true, message: 'failed to asign collection center' });
+                    });
+                }
+            });
+
+            // res.send({ error: true, message: 'collection center already asigned to this recycler' });
         
-            const index = user.collection_center.includes(req.body.collection_center);
-            console.log("index", index);
-            if (index === false) {
-                user.collection_center.push(req.body.collection_center);
-                user.save().then(result => {
-                    res.json({ error: false, code: 200, status: 'success', message: 'collection center has been asigned to recycler'});
-                }).catch(err => {
-                    // console.log(err.code);
-                    res.send({ error: true, message: 'failed to asign collection center' });
-                });
-            } else {
-                res.send({ error: true, message: 'collection center already asigned to this recycler' });
-            }
+            // const index = user.collection_center.includes(req.body.collection_center);
+            // console.log("index", index);
+            // if (index === false) {
+            //     user.collection_center.push(req.body.collection_center);
+            //     user.save().then(result => {
+            //         res.json({ error: false, code: 200, status: 'success', message: 'collection center has been asigned to recycler'});
+            //     }).catch(err => {
+            //         // console.log(err.code);
+            //         res.send({ error: true, message: 'failed to asign collection center' });
+            //     });
+            // } else {
+            //     res.send({ error: true, message: 'collection center already asigned to this recycler' });
+            // }
         }
         
     })

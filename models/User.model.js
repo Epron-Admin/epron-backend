@@ -60,6 +60,10 @@ let newUser = new Schema({
         required: true
         // default: 'user'
     },
+    collection_center_assigned: {
+        type: Boolean,
+        default: false
+    },
     epron_admin: {
         type: String,
         default: null
