@@ -210,6 +210,9 @@ export const remove_log_category = (req, res) => {
         if (err) {
             return res.json({error: true, status: 401, message: "failed to delete category"});
         }
+        if (!log) {
+            return res.json({error: true, status: 404, message: "can not find category"});
+        }
         else {
             Types.deleteMany({category_id: req.params.id}).exec((err, doc, next) => {
                 if (doc) {
@@ -222,10 +225,30 @@ export const remove_log_category = (req, res) => {
     });
 }
 
+export const remove_unverified_user = (req, res) => {
+    User.findByIdAndRemove({ _id: req.params.id, verified: false }, (err, user) => {
+        if (err) {
+            return res.json({error: true, status: 401, message: "failed to delete category"});
+        }
+        if (!user) {
+            return res.json({error: true, status: 404, message: "can not find user"});
+        }
+        if (user.verified === true) {
+            return res.json({error: true, status: 404, message: "this user is already verified"});
+        }
+        else {
+            return res.json({error: false, status: 201, message: "user removed"});
+        }
+    });
+}
+
 export const remove_log_type = (req, res) => {
     Types.findByIdAndRemove({ _id: req.params.id }, (err, type) => {
         if (err) {
             return res.json({error: true, status: 401, message: "failed to delete category type"});
+        }
+        if (!type) {
+            return res.json({error: true, status: 404, message: "can not find sub category"});
         }
         else {
             return res.json({error: false, status: 201, message: "success!" });
@@ -733,6 +756,43 @@ export const find_all_collection_center = async (req, res) => {
 }
 
 
+export const find_all_user_based_on_verified_status = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+    const total_users = await User.countDocuments({verified: req.query.verified}).exec();
+
+    if (endIndex <  await User.countDocuments({role: 'collector'}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    
+    User.find({ verified: req.query.verified }).sort('-created_at').limit(limit).skip(startIndex).exec((err, user) => {
+        if (err) {
+            console.log(err);
+            return res.json({error: true, status: 401, message: "Error occured"})
+        }
+        if (!user) {
+            console.log(err);
+            return res.json({error: true, status: 404, message: "User not found"})
+        }
+        
+        return res.json({error: false, status: 201, pagination: results, total_users: total_users, user: user, message: "successful!" });
+    });
+}
+
+
 
 export const fetch_logewaste_weight_by_recyclers = async (req, res) => {
     const page = parseInt(req.query.page);
@@ -756,9 +816,9 @@ export const fetch_logewaste_weight_by_recyclers = async (req, res) => {
             limit: limit
         }
     }
-    RecyclerWaste.find().sort('-created_at').populate('collection_centerid').limit(limit).skip(startIndex).exec((err, ewaste) => {
+    RecyclerWaste.find().sort('-created_at').populate('collection_centerid').populate('recycler_id').limit(limit).skip(startIndex).exec((err, ewaste) => {
         if (err) {
-            console.log(err);
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
             return res.json({error: true, status: 401, message: "Failed to fetch recycler ewaste weight logged"})
         }
         if (!ewaste) {
@@ -768,6 +828,43 @@ export const fetch_logewaste_weight_by_recyclers = async (req, res) => {
             return previousValue + currentValue.weight;
         }, 0);
         return res.json({error: false, status: 201, total_logged_ewaste: total_ewaste_logged, total_weight_logged_ton: waste_weight, pagination: results, ewaste: ewaste, message: "Fetch all logged ewaste successful!" });
+    });
+}
+
+export const fetch_logewaste_weight_by_recyclers_id = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_ewaste_logged = await RecyclerWaste.countDocuments({recycler_id: req.params.id}).exec();
+
+    if (endIndex <  await RecyclerWaste.countDocuments({recycler_id: req.params.id}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    RecyclerWaste.find({recycler_id: req.params.id}).sort('-created_at').populate('collection_centerid').populate('recycler_id').limit(limit).skip(startIndex).exec((err, ewaste) => {
+        if (err) {
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "Failed to fetch recycler ewaste weight logged"})
+        }
+        if (!ewaste) {
+            return res.json({error: true, status: 404, message: "Cant not find recyceler e-waste weight logged"})
+        }
+        const waste_weight = ewaste.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.weight;
+        }, 0);
+        return res.json({error: false, status: 201, total_logged_ewaste: total_ewaste_logged, total_weight_logged_ton: waste_weight, pagination: results, ewaste: ewaste, message: "Fetch all logged ewaste by user successful!" });
     });
 }
 
@@ -802,7 +899,7 @@ export const asign_collection_center_to_recyclers = (req, res) => {
                     res.send({code: 404, error: true, message: 'Can not find collection center' });
                 }
                 if (center.collection_center_assigned === true) {
-                    res.send({code: 404, error: true, message: 'collection center already assigned to a recycler' });
+                    res.send({code: 400, error: true, message: 'collection center already assigned to a recycler' });
                 } else {
                     center.collection_center_assigned = true;
                     center.save().then(result => {
@@ -825,8 +922,6 @@ export const asign_collection_center_to_recyclers = (req, res) => {
                     });
                 }
             });
-
-            // res.send({ error: true, message: 'collection center already asigned to this recycler' });
         
             // const index = user.collection_center.includes(req.body.collection_center);
             // console.log("index", index);
@@ -968,10 +1063,19 @@ export const dashboard_counts = async (req, res) => {
         let logged_eqiupment_weight = equipment.reduce(function (previousValue, currentValue) {
             return previousValue + currentValue.weight;
         }, 0);
+
+        const paid = equipment.filter((el) => {
+            return el.paid === true
+        });
+
+        let total_payment_reciceved = paid.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
         Ewaste.find({}).exec((err, waste, next) => {
             if (err) {
                 return res.status(401).send({error: true, message: "Error occurred while feching collection center logged ewaste"});
             }
+            
             let logged_collection_center_waste_weight = waste.reduce(function (previousValue, currentValue) {
                 return previousValue + currentValue.weight;
             }, 0);
@@ -984,14 +1088,27 @@ export const dashboard_counts = async (req, res) => {
                     return previousValue + currentValue.weight;
                 }, 0);
 
-                const recyclers = await User.countDocuments({role: 'recycler'}).exec();
-                const manufacturers = await User.countDocuments({role: 'manufacturer'}).exec();
-                const collectors = await User.countDocuments({role: 'collector'}).exec();
+                // verified
+                const recyclers = await User.countDocuments({role: 'recycler', verified: true}).exec();
+                const manufacturers = await User.countDocuments({role: 'manufacturer', verified: true}).exec();
+                const collectors = await User.countDocuments({role: 'collector', verified: true}).exec();
+                const admin = await User.countDocuments({role: 'admin'}).exec();
+
+                const unverified_recyclers = await User.countDocuments({role: 'recycler', verified: false}).exec();
+                const unverified_manufacturers = await User.countDocuments({role: 'manufacturer', verified: false}).exec();
+                const unverified_collectors = await User.countDocuments({role: 'collector', verified: false}).exec();
+                const toal_requested_pickups = await RequestPickup.countDocuments({}).exec();
 
                 let data = {
+                    total_payment_reciceved: total_payment_reciceved,
                     recyclers: recyclers,
                     manufacturers: manufacturers,
                     collectors: collectors,
+                    admin: admin,
+                    unverified_recyclers: unverified_recyclers,
+                    unverified_manufacturers: unverified_manufacturers,
+                    unverified_collectors: unverified_collectors,
+                    toal_requested_pickups: toal_requested_pickups,
                     manufacturers_logged_ewaste_weight: Math.round(logged_eqiupment_weight),
                     collection_centers_logged_ewaste_weight: Math.round(logged_collection_center_waste_weight),
                     recyclers_logged_ewaste_weight: Math.round(logged_recycler_waste_weight)

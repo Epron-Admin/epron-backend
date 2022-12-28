@@ -221,6 +221,7 @@ export const fetch_ewaste_by_user = async (req, res) => {
         }
     }
     Ewaste.find({user_id: req.params.id}).populate('category_id').populate('sub_category_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, waste) => {
+        // console.log("ewasteeeeeeeeeeeeeeeee", waste)
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed to fetch user logged ewaste"})
@@ -313,9 +314,9 @@ export const remove_log_ewaste = (req, res) => {
 }
 
 export const accept_request_pickup = async (req, res) => {
-    await RequestPickup.findById({_id: req.body.id, accept_request: false}).exec((err, pickup) => {
+    RequestPickup.findById({_id: req.body.id, accept_request: false}).exec((err, pickup) => {
         if (err) {
-            console.log("errrrrrrrrrrrr", err);
+            // console.log("errrrrrrrrrrrr", err);
             return res.json({error: true, status: 401, message: "Error oocured"});
         }
         if (!pickup) {
@@ -327,11 +328,40 @@ export const accept_request_pickup = async (req, res) => {
                 pickup.save().then((result) => {
                     return res.status(200).send({error: false, message: "Pickup has been accepted by you succuesfuly"});
                 }).catch(err => {
-                    console.log(err.code);
+                    // console.log(err.code);
                     res.send({ error: true, message: 'failed to accept pickup' });
                 });
             } else {
                 return res.json({error: true, status: 401, message: "Pickup has already been picked"});
+            }
+            
+        }
+    });
+}
+
+export const update_ewaste_to_ready_pickup = (req, res) => {
+    Ewaste.findById({_id: req.body.id, user_id: req.body.user_id}).exec((err, waste) => {
+        if (err) {
+            // console.log("errrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "Error oocured"});
+        }
+        if (waste.user_id != req.body.user_id) {
+            return res.status(404).send({error: true, message: "collection center not found"});
+        } 
+        if (!waste) {
+            return res.status(404).send({error: true, message: "pickup request not found"});
+        } 
+        else {
+            if ( waste.ready_pickup === false) {
+                waste.ready_pickup = true;
+                waste.save().then((result) => {
+                    return res.status(200).send({error: false, code: 200, message: 'success', message: "e-waste ready for pick up"});
+                }).catch(err => {
+                    // console.log(err.code);
+                    res.send({ error: true, message: 'failed to update e-waste' });
+                });
+            } else {
+                return res.json({error: true, status: 401, message: "e-waste already set for pick up"});
             }
             
         }

@@ -20,16 +20,19 @@ import {
     fetch_all_users,
     fetch_collection_center_byId,
     fetch_logewaste_weight_by_recyclers,
+    fetch_logewaste_weight_by_recyclers_id,
     fetch_recyclers_and_colection_center,
     fetch_users_loged_equiptment_oem,
     fetch_user_loged_equiptment_paid_status_oem,
     find_all_collection_center,
+    find_all_user_based_on_verified_status,
     new_category, 
     new_sub_cateory,
     reg_user_erpon,
     remove_collection_center_recycler_user,
     remove_log_category,
     remove_log_type,
+    remove_unverified_user,
     search_logged_equipment_with_varibles,
     // remove_recycler_to_collection_center,
     unblock_user,
@@ -62,7 +65,7 @@ router.patch('/block_user/:id', block_user);
 router.get('/fetch-all-logged-equipments', fetch_users_loged_equiptment_oem);
 router.get('/fetch-all-logged-equipments-paid-status', fetch_user_loged_equiptment_paid_status_oem);
 
-router.get('/serach-equipments-logged', search_logged_equipment_with_varibles)
+router.get('/search-equipments-logged', search_logged_equipment_with_varibles)
 
 
 router.get('/all_collection_center', find_all_collection_center);
@@ -71,8 +74,13 @@ router.get('/fetch_one_center_byid/:id', fetch_collection_center_byId);
 router.patch('/asign_recycler', asign_recycler_to_collection_center);
 // router.patch('/remove_recycler', remove_recycler_to_collection_center);
 
+router.delete('/removed-unverified_user/:id', remove_unverified_user);
+
+router.get('/fetct-users-verified-status', find_all_user_based_on_verified_status);
+
 router.get('/all_accepted_requests', fetch_all_pickups_accepted);
 router.get('/recyclers-logged-waste-weight', fetch_logewaste_weight_by_recyclers);
+router.get('/recyclers-logged-waste-weight-by-userid/:id', fetch_logewaste_weight_by_recyclers_id);
 
 
 // Look at this again

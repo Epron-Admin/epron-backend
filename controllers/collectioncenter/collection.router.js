@@ -11,6 +11,7 @@ import {
     // new_collection_ceneter,
     // remove_collection_center,
     remove_log_ewaste,
+    update_ewaste_to_ready_pickup,
     // update_center,
     update_logged_ewaste
  } from './collection.controllers.js';
@@ -33,6 +34,8 @@ router.get('/user_centers/:id', fetch_collection_centers_by_userid);
 // router.put('/update_center/:id', update_center);
 
 router.patch('/accept_pickup', accept_request_pickup);
+
+router.patch('/ready-for-pickup', update_ewaste_to_ready_pickup);
 
 // router.get('/all_collection_center', find_all_collection_center);
 

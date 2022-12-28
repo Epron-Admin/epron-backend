@@ -178,7 +178,7 @@ export const update_profile = (req, res) => {
             // console.log('The user', user);
             // console.log('the body', req.body);
             user.name = req.body.name;
-            user.email = req.body.email;
+            // user.email = req.body.email;
             user.phoneNumber = req.body.phoneNumber;
             user.address = req.body.address;
             user.state = req.body.state;

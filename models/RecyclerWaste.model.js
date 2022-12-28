@@ -27,7 +27,7 @@ let RecyclerWaste = new Schema({
     },
     collection_centerid: {
         type: Schema.Types.ObjectId,
-        ref:'CollectionCenter',
+        ref:'User',
         required: true
     },
     created_at: {
