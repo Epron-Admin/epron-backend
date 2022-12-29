@@ -575,6 +575,12 @@ export const fetch_all_loged_ewaste = async (req, res) => {
     const endIndex = page * limit;
     const results = {};
 
+    const total_ewaste = await Ewaste.countDocuments({}).exec();
+    const total_pickedup = await Ewaste.countDocuments({pickedup: true}).exec();
+    const total_unpickedup = await Ewaste.countDocuments({pickedup: false}).exec();
+    const total_ready_for_pickup = await Ewaste.countDocuments({ready_pickup: true}).exec();
+    const total_not_ready_for_pickup = await Ewaste.countDocuments({ready_pickup: false}).exec();
+
     if (endIndex <  await Ewaste.countDocuments().exec()) {
         results.next = {
             page: page + 1,
@@ -591,10 +597,18 @@ export const fetch_all_loged_ewaste = async (req, res) => {
     Ewaste.find({}).sort('-created_at').populate('category_id').populate('sub_category_id').populate('user_id').limit(limit).skip(startIndex).exec((err, ewaste, next) => {
         if (err) {
             console.log(err);
-            return res.json({error: true, status: 401, message: "Failed to fetch logged equipment"})
+            return res.json({error: true, status: 401, message: "error occured"})
         }
+        if (!ewaste) {
+            console.log(err);
+            return res.json({error: true, status: 404, message: "e-waste not found"})
+        }
+        
         else {
-            return res.json({error: false, status: 201, pagination: results, ewaste: ewaste, message: "Fetch all logged ewaste successful!" });
+            const total_ewaste_weight = ewaste.reduce(function (previousValue, currentValue) {
+                return previousValue + currentValue.weight;
+            }, 0);
+            return res.json({error: false, status: 201, pagination: results, total_ewaste: total_ewaste, total_ready_for_pickup: total_ready_for_pickup, total_not_ready_for_pickup: total_not_ready_for_pickup, total_ewaste_weight: total_ewaste_weight, total_unpickedup: total_unpickedup, total_pickedup: total_pickedup, ewaste: ewaste, message: "Fetch all logged ewaste successful!" });
         }
     });
 }
@@ -984,7 +998,7 @@ export const remove_collection_center_recycler_user = (req, res) => {
 }
 
 
-export const fetch_recyclers_and_colection_center = (req, res) => {
+export const fetch_recyclers_with_colection_center = (req, res) => {
     //  the user_id is the id of the user which is a collection center or collector while signing up
     if (
         (!req.params.collection_center) ||
@@ -1121,6 +1135,62 @@ export const dashboard_counts = async (req, res) => {
     });
 }
 
+
+export const search_user_varibles = async (req, res) => {
+    // console.log('Search', req.query.search);
+    let query = { name: req.query.search };
+    // let regex = new RegExp(query,'i');
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_users = await User.countDocuments({$or: [
+        {'name': {$regex: req.query.search, $options: 'i'}},
+        {'email': {$regex: req.query.search, $options: 'i'}},
+        ]}).exec();
+
+    if (endIndex <  await User.countDocuments({$or: [
+        {'name': {$regex: req.query.search, $options: 'i'}},
+        {'email': {$regex: req.query.search, $options: 'i'}},
+        ]}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    User.find({
+        $or: [
+        {'name': {$regex: req.query.search, $options: 'i'}},
+        {'email': {$regex: req.query.search, $options: 'i'}},
+        ]
+    }).exec((err, user) => {
+        if (err) {
+            console.log(err);
+            return res.status(401).send({error: true, message: "Error occurred while feching users"});
+        }
+        if (!user) {
+            return res.status(404).send({error: true, message: "can not find users"});
+        }
+        res.json({error: false, message: 'success', pagination: results, total_users: total_users, users: user, code: 200});
+        // console.log('search', search);
+    }),((err) => {
+        // console.log(err);
+        res.send({error: true, message: 'server error'});
+    });
+}
+
+
+
 // Search Log equipments only user by name and email
 // export const search_logged_equipment_with_varibles = (req, res) => {
 //     console.log('Search', req.query.search);
@@ -1165,7 +1235,7 @@ export const search_logged_equipment_with_varibles  = (req, res, next) => {
         res.json({search, user});
         // console.log('search', search);
         }),((err) => {
-            console.log(err);
+            // console.log(err);
             res.send({error: true, message: 'An error while seaching logged equipment'});
         });
 

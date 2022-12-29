@@ -21,7 +21,8 @@ import {
     fetch_collection_center_byId,
     fetch_logewaste_weight_by_recyclers,
     fetch_logewaste_weight_by_recyclers_id,
-    fetch_recyclers_and_colection_center,
+    // fetch_recyclers_and_colection_center,
+    fetch_recyclers_with_colection_center,
     fetch_users_loged_equiptment_oem,
     fetch_user_loged_equiptment_paid_status_oem,
     find_all_collection_center,
@@ -37,6 +38,7 @@ import {
     remove_log_type,
     remove_unverified_user,
     search_logged_equipment_with_varibles,
+    search_user_varibles,
     // remove_recycler_to_collection_center,
     unblock_user,
     update_category,
@@ -60,6 +62,7 @@ router.get('/get_all_ewastes', fetch_all_loged_ewaste);
 router.put('/update_subcategory/:id', update_sub_category);
 router.delete('/delete_category/:id', remove_log_category);
 router.get('/all_users', fetch_all_users);
+router.get('/search-users-name-email', search_user_varibles);
 router.post('/user-reg', reg_user_erpon);
 router.get('/admin_users', fetch_all_admin_users);
 router.patch('/unblock_user/:id', unblock_user);
@@ -75,7 +78,7 @@ router.get('/search-equipments-logged', search_logged_equipment_with_varibles)
 
 
 router.get('/all_collection_center', find_all_collection_center);
-router.get('/fetch-recycler-with-collection-centers/:collection_center/:recycler_id', fetch_recyclers_and_colection_center);
+router.get('/fetch-recycler-with-collection-centers/:collection_center/:recycler_id', fetch_recyclers_with_colection_center);
 router.get('/fetch_one_center_byid/:id', fetch_collection_center_byId);
 router.patch('/asign_recycler', asign_recycler_to_collection_center);
 // router.patch('/remove_recycler', remove_recycler_to_collection_center);

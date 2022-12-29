@@ -862,14 +862,18 @@ export const fetch_all_loged_equiptments = async (req, res) => {
 export const remove_log_equipment = (req, res) => {
     Log.findByIdAndRemove({ _id: req.params.id }, (err, log) => {
         if (err) {
-            return res.json({error: true, status: 401, message: "failed to delete log"});
+            return res.json({error: true, status: 401, message: "error occured"});
             // res.json(err);
         }
-        // if (log.paid === true) {
-        //     return res.status(401).send({error: true, message: "you can not delete this log"});
-        // }
+        if (!log) {
+            return res.json({error: true, status: 401, message: "log equipment not found"});
+            // res.json(err);
+        }
+        if (log.paid === true) {
+            return res.status(401).send({error: true, message: "you can not delete this log"});
+        }
         else {
-        return res.json({error: false, status: 201, message: "success!" });
+            return res.json({error: false, status: 201, message: "success!" });
             // res.json('removed successfully');
         }
     });

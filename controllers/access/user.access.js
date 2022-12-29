@@ -471,10 +471,15 @@ export const verify_user = (req, res, next) => {
 
    // login for user
    export const login_user = (req, res) => {
-        let promise = User.findOne({ email: req.body.email,  verified: true, blocked: false}).exec();
+        let promise = User.findOne({ email: req.body.email, blocked: false}).exec();
         promise.then(function (doc) {
             if (doc) {
-                // console.log(doc);
+                if (doc.verified === false) {
+                    return res.json({ error: true, message: 'you are not verified', code: 403 });
+                }
+                if (doc.blocked === true) {
+                    return res.json({ error: true, message: 'you have been disabled', code: 405 });
+                }
                 if (doc.isValid(req.body.password)) {
                     // const token = jwt.sign({ email: doc.get('email'), _id: doc._id }, 'secret');
                     const token = jwt.sign({ email: doc.email, _id: doc._id}, 'secret');

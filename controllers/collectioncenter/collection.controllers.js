@@ -255,6 +255,10 @@ export const update_logged_ewaste = async (req, res) => {
         // if (log.paid === true) {
         // return res.status(401).send({error: true, message: "you can not update this log"});
         // }
+        if (ewaste.pickedup === true) {
+            // return next(new Error('Could not find logged eqiupment'));
+            return res.status(404).send({error: true, message: "You can not update this ewaste, it has been picked up"});
+        }
         if (!ewaste) {
             // return next(new Error('Could not find logged eqiupment'));
             return res.status(404).send({error: true, message: "Could not find logged ewaste"});
@@ -305,6 +309,9 @@ export const remove_log_ewaste = (req, res) => {
         if (err) {
             return res.json({error: true, status: 401, message: "failed to delete waste"});
             // res.json(err);
+        }
+        if (ewaste.pickedup === true) {
+            return res.status(404).send({error: true, message: "you can not delete this e-waste, it has been picked up"});
         }
         if (!ewaste) {
             return res.status(404).send({error: true, message: "e-waste not found"});

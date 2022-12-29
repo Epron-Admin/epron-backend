@@ -13,6 +13,8 @@ export const fetch_all_pickup_by_location = async (req, res) => {
     const endIndex = page * limit;
     const results = {};
 
+    const total_pickups = await RequestPickup.countDocuments({}).exec();
+
     if (endIndex <  await RequestPickup.countDocuments().exec()) {
         results.next = {
             page: page + 1,
@@ -33,8 +35,12 @@ export const fetch_all_pickup_by_location = async (req, res) => {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch all request pickups"})
         }
+        if (!requestpickup) {
+            console.log(err);
+            return res.json({error: true, status: 404, message: "pickups not found"})
+        }
        
-        return res.json({error: false, status: 201, pagination: results, requests: requestpickup, message: "All request for pickup successful!" });
+        return res.json({error: false, status: 201, pagination: results, total_pickups: total_pickups, requests: requestpickup, message: "All request for pickup successful!" });
     });
 }
 
