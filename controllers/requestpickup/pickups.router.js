@@ -4,6 +4,7 @@ import express from 'express';
 
 import {
     fetch_all_pickup,
+    fetch_all_pickup_accepted,
     fetch_all_pickup_based_on_location,
     fetch_all_pickup_based_on_location_accepted,
     fetch_all_pickup_based_on_location_anduser,
@@ -23,6 +24,7 @@ router.get('/pickups', fetch_all_pickup);
 router.get('/pickups/:location', fetch_all_pickup_based_on_location);
 router.get('/unaccepted_pickups_only/:location', fetch_all_pickup_based_on_location_unaccepted);
 router.get('/accepted_pickups/:location', fetch_all_pickup_based_on_location_accepted);
+router.get('/accepted_pickups', fetch_all_pickup_accepted);
 router.get('/accepted_pickup_byuser/:id/:location', fetch_all_pickup_based_on_location_anduser);
 
 
