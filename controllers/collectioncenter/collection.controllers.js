@@ -53,10 +53,14 @@ import console from 'console';
 export const fetch_collection_centers_by_userid = (req, res) => {
     User.findById({_id: req.params.id}).sort('-created_at').exec((err, centers) => {
         if (err) {
-            console.log(err);
-            return res.send(err);
+            // console.log(err);
+            return res.status(401).send({error: true, message: "error occured"});
         }
-        res.send(centers);
+        if (!centers) {
+            // console.log(err);
+            return res.status(404).send({error: true, message: "collection centers not found"});
+        }
+        return res.status(201).send({error: false, message: "success", collection_centers: centers});
 
     });
 }

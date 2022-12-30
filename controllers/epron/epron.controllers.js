@@ -1214,7 +1214,7 @@ export const search_user_varibles = async (req, res) => {
 
 // Search Log equipments only user by name and email
 export const search_logged_equipment_with_varibles  = (req, res, next) => {
-    console.log('Search', req.query.search);
+    // console.log('Search', req.query.search);
 
     User.find({$text: { $search: req.query.search, $diacriticSensitive: false}}, { score: { $meta: "textScore" } }).sort( 
         {  score: { $meta : 'textScore' } }).exec((err, user) => {
@@ -1227,7 +1227,7 @@ export const search_logged_equipment_with_varibles  = (req, res, next) => {
         // console.log("User serced for", user);
         // return res.send({error: false, message: "User searched done", user});
 
-        Log.find({ user_id: user[0]._id }).exec((err, search) => {
+        Log.find({ user_id: user[0]._id }).populate('category_id').populate('sub_category_id').populate('user_id').exec((err, search) => {
         if (err) {
             console.log(err);
             return res.send(err);
