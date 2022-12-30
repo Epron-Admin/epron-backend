@@ -276,3 +276,21 @@ export const update_ewaste_to_pickedup_by_recycler = (req, res) => {
         }
     });
 }
+
+
+export const fetch_recyclers_collection_center = (req, res) => {
+    User.findById({_id: req.params.recycler_id, role: 'collector'}).populate('collection_center').exec((err, recyceler) => {
+        if (err) {
+            return res.json({error: true, status: 401, message: "Error oocured"});
+        }
+        if (!recyceler) {
+            return res.json({error: true, status: 404, message: "recyceler not found"});
+        }
+        // if (recyceler.user_id != req.body.user_id) {
+        //     return res.status(404).send({error: true, message: "collection center not found"});
+        // } 
+        else {
+            return res.status(200).send({error: false, code: 200, message: 'success', recyceler: recyceler});
+        }
+    });
+}
