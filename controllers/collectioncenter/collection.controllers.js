@@ -379,6 +379,40 @@ export const update_ewaste_to_ready_pickup = (req, res) => {
     });
 }
 
+export const mark_pickup_as_completed = async (req, res) => {
+    RequestPickup.findById({_id: req.body.id}).exec((err, pickup) => {
+        if (err) {
+            // console.log("errrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "Error oocured"});
+        }
+        if (!pickup) {
+            return res.status(404).send({error: true, message: "pickup request not found"});
+        } 
+        if (pickup.accepted_by === req.body.user_id) {
+            return res.status(401).send({error: true, message: "you did not accept this pickup"});
+        }
+        if (pickup.completed === true) {
+            return res.status(401).send({error: true, message: "pickup already marked as completed"});
+        } 
+        
+        else {
+            // && pickup.completed != true
+            if ( pickup.accept_request === true) {
+                pickup.completed = true;
+                pickup.save().then((result) => {
+                    return res.status(200).send({error: false, message: "Pickup has been completed by you succuesfuly"});
+                }).catch(err => {
+                    // console.log(err.code);
+                    res.send({ error: true, message: 'failed to mark as completed' });
+                });
+            } else {
+                return res.json({error: true, status: 401, message: "Pickup has not been accepted by you"});
+            }
+            
+        }
+    });
+}
+
 // export const new_sub_cateory = (req, res) => {
 //     console.log("reqquests", req.body);
 //     if ((!req.body.name) || (!req.body.category_id) || (!req.body.price)) {

@@ -29,7 +29,8 @@ import {
 		initialize_transanction,
 		update_payment_option,
 		update_multiple_payment_options,
-		fetch_user_loged_equiptment_byid_paid_status
+		fetch_user_loged_equiptment_byid_paid_status,
+		excel_bulk_equipment
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -72,6 +73,10 @@ router.get("/find_user_by_role/:role", find_user_by_role);
 router.get("/user/:id", find_user_byid);
 
 router.get('/collection_by_location/:lga', find_collection_center_by_location);
+
+
+
+router.post('/excel-equipment', excel_bulk_equipment);
 
 
 // paystck payment

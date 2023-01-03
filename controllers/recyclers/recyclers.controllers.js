@@ -82,6 +82,80 @@ export const fetch_ewaste_by_collection_center = async (req, res) => {
     });
 }
 
+export const fetch_ewaste_by_collection_center_ready_for_pickup = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_ewaste_logged = await Ewaste.countDocuments({user_id: req.body.user_id, ready_pickup: req.query.ready_pickup}).exec();
+
+    if (endIndex <  await Ewaste.countDocuments({ready_pickup: req.query.ready_pickup}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    Ewaste.find({user_id: req.body.user_id, ready_pickup: req.query.ready_pickup}).sort('-created_at').limit(limit).skip(startIndex).exec((err, ewaste) => {
+        if (err) {
+            console.log(err);
+            return res.json({error: true, status: 401, message: "Failed to fetch center ewaste"})
+        }
+        if (!ewaste) {
+            return res.json({error: true, status: 404, message: "Cant not find e-waste"})
+        }
+        const waste_weight = ewaste.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.weight;
+          }, 0);
+        return res.json({error: false, status: 201, total_logged_ewaste: total_ewaste_logged, total_weight_logged: waste_weight, pagination: results, ewaste: ewaste, message: "success!" });
+    });
+}
+
+export const fetch_ewaste_by_collection_center_pickedup = async (req, res) => {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_ewaste_logged = await Ewaste.countDocuments({user_id: req.body.user_id, pickedup: req.query.pickedup}).exec();
+
+    if (endIndex <  await Ewaste.countDocuments({pickedup: req.query.pickedup}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    Ewaste.find({user_id: req.body.user_id, pickedup: req.query.pickedup}).sort('-created_at').limit(limit).skip(startIndex).exec((err, ewaste) => {
+        if (err) {
+            console.log(err);
+            return res.json({error: true, status: 401, message: "Failed to fetch center ewaste"})
+        }
+        if (!ewaste) {
+            return res.json({error: true, status: 404, message: "Cant not find e-waste"})
+        }
+        const waste_weight = ewaste.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.weight;
+          }, 0);
+        return res.json({error: false, status: 201, total_logged_ewaste: total_ewaste_logged, total_weight_logged: waste_weight, pagination: results, ewaste: ewaste, message: "success!" });
+    });
+}
+
 
 
 export const log_weight_from_collection_center_ewaste = async (req, res) => {

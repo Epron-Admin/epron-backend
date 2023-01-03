@@ -15,6 +15,7 @@ import {
     fetch_all_categories, 
     fetch_all_loged_ewaste, 
     fetch_all_pickups_accepted, 
+    fetch_all_pickup_based_on_acceptance, 
     fetch_all_sub_categories, 
     fetch_all_sub_categories_by_categoryid, 
     fetch_all_users,
@@ -76,6 +77,7 @@ router.get('/fetch-all-logged-equipments-paid-status', fetch_user_loged_equiptme
 
 router.get('/search-equipments-logged', search_logged_equipment_with_varibles)
 
+router.get('/pickups_based_on_acceptance', fetch_all_pickup_based_on_acceptance);
 
 router.get('/all_collection_center', find_all_collection_center);
 router.get('/fetch-recycler-with-collection-centers/:collection_center/:recycler_id', fetch_recyclers_with_colection_center);

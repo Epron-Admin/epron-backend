@@ -997,6 +997,12 @@ export const bulk_log_upload3 = async (req, res, next) => {
      });
 };
 
+export const excel_bulk_equipment = async (req, res) => {
+    console.log("datatatatatata", req.body);
+    return res.status(200).send({error: false, message: 'working on this data wil get back to you'});
+};
+
+
 
 
 

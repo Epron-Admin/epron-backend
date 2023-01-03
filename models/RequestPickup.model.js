@@ -12,6 +12,10 @@ let requestPickup = new Schema({
         type: String,
         required: true
     },
+    country: {
+        type: String,
+        // required: true
+    },
     state: {
         type: String,
         required: true
@@ -32,6 +36,10 @@ let requestPickup = new Schema({
     //     type: String,
     //     required: true
     // },
+    completed: {
+        type: Boolean,
+        default: false
+    },
     accept_request: {
         type: Boolean,
         default: false,

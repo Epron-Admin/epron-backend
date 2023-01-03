@@ -8,6 +8,7 @@ import {
     fetch_collection_centers_by_userid, 
     fetch_ewaste_by_user, 
     log_single_ewaste, 
+    mark_pickup_as_completed, 
     // new_collection_ceneter,
     // remove_collection_center,
     remove_log_ewaste,
@@ -32,6 +33,8 @@ router.delete('/delete_ewaste/:id', remove_log_ewaste);
 router.get('/user_centers/:id', fetch_collection_centers_by_userid); 
 // router.delete('/delete_center/:id', remove_collection_center);
 // router.put('/update_center/:id', update_center);
+
+router.patch('/mark-pickup-completed', mark_pickup_as_completed);
 
 router.patch('/accept_pickup', accept_request_pickup);
 
