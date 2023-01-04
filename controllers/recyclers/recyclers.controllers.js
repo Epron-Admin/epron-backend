@@ -89,7 +89,7 @@ export const fetch_ewaste_by_collection_center_ready_for_pickup = async (req, re
     const endIndex = page * limit;
     const results = {};
 
-    const total_ewaste_logged = await Ewaste.countDocuments({user_id: req.body.user_id, ready_pickup: req.query.ready_pickup}).exec();
+    const total_ewaste_logged = await Ewaste.countDocuments({user_id: req.params.id, ready_pickup: req.query.ready_pickup}).exec();
 
     if (endIndex <  await Ewaste.countDocuments({ready_pickup: req.query.ready_pickup}).exec()) {
         results.next = {
@@ -104,7 +104,7 @@ export const fetch_ewaste_by_collection_center_ready_for_pickup = async (req, re
             limit: limit
         }
     }
-    Ewaste.find({user_id: req.body.user_id, ready_pickup: req.query.ready_pickup}).sort('-created_at').limit(limit).skip(startIndex).exec((err, ewaste) => {
+    Ewaste.find({user_id: req.params.id, ready_pickup: req.query.ready_pickup}).sort('-created_at').limit(limit).skip(startIndex).exec((err, ewaste) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed to fetch center ewaste"})
