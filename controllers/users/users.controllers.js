@@ -1079,7 +1079,7 @@ export const log_equiptment2 = async (req, res) => {
 export const excel_bulk_equipment = async (req, res) => {
     console.log("datatatatatata", req.body);
     User.findById({ _id: req.body.user_id, role: 'manufacturer' }).exec((err, user) => {
-        const total = type.price * ton_weight;
+        // const total = type.price * ton_weight;
                 const pin = Math.random().toString(36).slice(2);
                 let log = new Log({
                     category_id: req.body.category_id,
