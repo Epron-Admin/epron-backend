@@ -1077,36 +1077,67 @@ export const log_equiptment2 = async (req, res) => {
 }
 
 export const excel_bulk_equipment = async (req, res) => {
-    console.log("datatatatatata", req.body);
     User.findById({ _id: req.body.user_id, role: 'manufacturer' }).exec((err, user) => {
-        // const total = type.price * ton_weight;
-                const pin = Math.random().toString(36).slice(2);
-                let log = new Log({
-                    category_id: req.body.category_id,
-                    // unit_price: type.price,
-                    price: req.body.price,
-                    total: req.body.total,
-                    sub_category_id: req.body.sub_category_id,
-                    quantity: req.body.quantity,
-                    weight: req.body.weight,
-                    unit: req.body.unit,
-                    unit_weight: req.body.unit_weight,
-                    user_id: req.body.user_id,
-                    equipment_pin: req.body.equipment_pin,
-                    created_at: Date.now(),
-                    updated_at: Date.now()
-                }); 
-                log.save()
-            .then(data => {
-                res.status(201).json({log: data, error: false, message: "equipment saved successful!" });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(401).send({error: true, message: "Failed to save equipment"});
-            });
+        if (
+            (!req.body.category_id) ||
+            (!req.body.total) ||
+            (!req.body.price) ||
+            (!req.body.sub_category_id) ||
+            (!req.body.unit_weight) ||
+            (!req.body.quantity) ||
+            (!req.body.weight) ||
+            (!req.body.unit) ||
+            (!req.body.user_id)
+            ) {
+            return res.status(401).send({error: true, message: "Category_id, price, sub_category_id, unit_weight, unit, total, quantity, weight and user_id are required"});
+        }
+        if (err) {
+            return res.json({error: true, status: 401, message: "error occured for this user"});
+        }
+        if (!user) {
+            return res.json({error: true, status: 401, message: "user not found"});
+        }
+        let log = new Log({
+            category_id: req.body.category_id,
+            // unit_price: type.price,
+            price: req.body.price,
+            total: req.body.total,
+            sub_category_id: req.body.sub_category_id,
+            quantity: req.body.quantity,
+            weight: req.body.weight,
+            unit: req.body.unit,
+            unit_weight: req.body.unit_weight,
+            user_id: req.body.user_id,
+            equipment_pin: req.body.equipment_pin,
+            created_at: Date.now(),
+            updated_at: Date.now()
+        }); 
+        log.save().then(data => {
+            res.status(201).json({error: false, message: "bulk equipment saved successful!" });
+        }).catch(err => {
+            console.log(err);
+            res.status(401).send({error: true, message: "Failed to save bulk equipment"});
+        });
     });
-    // return res.status(200).send({error: false, message: 'working on this data wil get back to you'});
 };
+
+
+export const get_price_of_equipment_for_payment = (req, res) => {
+    Log.find({equipment_pin: req.params.pin}).sort('-created_at').exec((err, log) => {
+        if (err) {
+            return res.status(401).send({error: true, message: "error occured while finding ewaste"});
+        }
+        if (!log) {
+            // console.log(err);
+            return res.status(404).send({error: true, message: "ewastes not found"});
+        }
+        const total_payment = log.reduce(function (previousValue, currentValue) {
+            return previousValue + currentValue.total;
+        }, 0);
+        return res.status(201).send({error: false, message: "success", total_payment: total_payment});
+
+    });
+}
 
 
 

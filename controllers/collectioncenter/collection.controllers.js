@@ -136,7 +136,7 @@ export const log_single_ewaste = async (req, res) => {
         return res.status(401).send({error: true, message: "Category_id, unit, type, quantity, weight and user_id are required"});
     } 
 
-    await User.findById({_id: req.body.user_id, role: 'collector'}).exec((err, user) => {
+    User.findById({_id: req.body.user_id, role: 'collector'}).exec((err, user) => {
         if (err) {
             console.log(err);
             return res.send(err);
@@ -198,6 +198,49 @@ export const log_single_ewaste = async (req, res) => {
     });
 }
 
+export const excel_bulk_ewaste = async (req, res) => {
+    User.findById({ _id: req.body.user_id, role: 'collector' }).exec((err, user) => {
+        if (
+            (!req.body.category_id) ||
+            (!req.body.total) ||
+            (!req.body.price) ||
+            (!req.body.sub_category_id) ||
+            (!req.body.unit_weight) ||
+            (!req.body.quantity) ||
+            (!req.body.weight) ||
+            (!req.body.unit) ||
+            (!req.body.user_id)
+            ) {
+            return res.status(401).send({error: true, message: "Category_id, price, sub_category_id, unit_weight, unit, total, quantity, weight and user_id are required"});
+        } 
+        if (err) {
+            return res.json({error: true, status: 401, message: "error occured for this user"});
+        }
+        if (!user) {
+            return res.json({error: true, status: 401, message: "user not found"});
+        }
+        let ewaste = new Ewaste({
+            category_id: req.body.category_id,
+            price: req.body.price,
+            total: req.body.total,
+            sub_category_id: req.body.sub_category_id,
+            quantity: req.body.quantity,
+            weight: req.body.weight,
+            unit: req.body.unit,
+            unit_weight: req.body.unit_weight,
+            user_id: req.body.user_id,
+            equipment_pin: req.body.equipment_pin,
+            created_at: Date.now(),
+            updated_at: Date.now()
+        }); 
+        ewaste.save().then(data => {
+            res.status(201).json({error: false, message: "bulk e-waste saved successful!" });
+        }).catch(err => {
+            console.log(err);
+            res.status(401).send({error: true, message: "Failed to save bulk e-waste"});
+        });
+    });
+};
 
 
 export const fetch_ewaste_by_user = async (req, res) => {

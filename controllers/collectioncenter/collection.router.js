@@ -4,6 +4,7 @@ import express from 'express';
 // import { find_all_collection_center } from '../epron/epron.controllers.js';
 import { 
     accept_request_pickup,
+    excel_bulk_ewaste,
     // fetch_all_collection_centers, 
     fetch_collection_centers_by_userid, 
     fetch_ewaste_by_user, 
@@ -26,6 +27,7 @@ const router = express.Router();
 
 router.post('/log-one-ewaste', log_single_ewaste);
 // router.post('/add_collection_center', new_collection_ceneter);
+router.post('/excel-bulk-ewaste', excel_bulk_ewaste);
 router.get('/fetch_ewaste_userid/:id', fetch_ewaste_by_user);
 router.put('/update-eqaste/:id', update_logged_ewaste);
 router.delete('/delete_ewaste/:id', remove_log_ewaste);

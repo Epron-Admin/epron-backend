@@ -26,10 +26,6 @@ let ewaste = new Schema({
         type: String,
         required: true
     },
-    // user_id: {
-    //     type: String,
-    //     required: true
-    // },
     user_id: {
         type: Schema.Types.ObjectId,
         ref:'User',

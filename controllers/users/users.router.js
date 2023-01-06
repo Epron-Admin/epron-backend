@@ -30,7 +30,8 @@ import {
 		update_payment_option,
 		update_multiple_payment_options,
 		fetch_user_loged_equiptment_byid_paid_status,
-		excel_bulk_equipment
+		excel_bulk_equipment,
+		get_price_of_equipment_for_payment
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -77,6 +78,7 @@ router.get('/collection_by_location/:lga', find_collection_center_by_location);
 
 
 router.post('/excel-equipment', excel_bulk_equipment);
+router.get('/payment-amount/:pin', get_price_of_equipment_for_payment);
 
 
 // paystck payment
