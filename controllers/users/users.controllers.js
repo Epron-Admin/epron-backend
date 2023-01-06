@@ -997,9 +997,115 @@ export const bulk_log_upload3 = async (req, res, next) => {
      });
 };
 
+
+export const log_equiptment2 = async (req, res) => {
+    if (
+        (!req.body.category_id) ||
+        // (!req.body.price) ||
+        (!req.body.sub_category_id) ||
+        (!req.body.quantity) ||
+        (!req.body.weight) ||
+        (!req.body.unit) ||
+        (!req.body.user_id)
+        ) {
+        return res.status(401).send({error: true, message: "Category_id, unit, type, quantity, weight and user_id are required"});
+    } 
+
+    User.findById({_id: req.body.user_id}).exec((err, user) => {
+        if (err) {
+            // console.log(err);
+            return res.send(err);
+        }
+        if (!user) {
+            return res.status(404).send({error: true, message: "User not found"});;
+        }
+
+        if (user.role != 'manufacturer') {
+            return res.status(401).send({error: true, message: "This user can not log equipment"});
+        }
+        else {
+            let ton_weight;
+            Types.findById({ _id: req.body.sub_category_id }).exec((err, type) => {
+                console.log("Sub category", type)
+                if (err) {
+                    // console.log(err);
+                    return res.json({error: true, status: 401, message: "Failed fetch types"})
+                }
+                if (!type) {
+                    // console.log(err);
+                    return res.json({error: true, status: 404, message: "Sub category not found"});
+                }
+                
+                // note the weight is measured in tonage or ton, after the aggregation from the unit.
+                if (req.body.unit === 'kg') {
+                    ton_weight = 0.00110231 * req.body.weight;
+                }
+                if (req.body.unit === 'g') {
+                ton_weight = 0.0000011023 * req.body.weight;
+                }
+                // const ton_weight = req.body.unit * req.body.weight;
+                // const total = type.price *  req.body.quantity * ton_weight;
+                const total = type.price * ton_weight;
+                const pin = Math.random().toString(36).slice(2);
+                 let log = new Log({
+                category_id: req.body.category_id,
+                // unit_price: type.price,
+                price: type.price,
+                total: Math.round(total),
+                sub_category_id: req.body.sub_category_id,
+                quantity: req.body.quantity,
+                weight: ton_weight,
+                unit: req.body.unit,
+                unit_weight: req.body.weight,
+                user_id: req.body.user_id,
+                equipment_pin: pin,
+                created_at: Date.now(),
+                updated_at: Date.now()
+        
+            });
+            log.save()
+            .then(data => {
+                res.status(201).json({log: data, error: false, message: "equipment saved successful!" });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(401).send({error: true, message: "Failed to save equipment"});
+            });
+        });
+        }
+    });
+}
+
 export const excel_bulk_equipment = async (req, res) => {
     console.log("datatatatatata", req.body);
-    return res.status(200).send({error: false, message: 'working on this data wil get back to you'});
+    User.findById({ _id: req.body.user_id, role: 'manufacturer' }).exec((err, user) => {
+        const total = type.price * ton_weight;
+                const pin = Math.random().toString(36).slice(2);
+                let log = new Log({
+                    category_id: req.body.category_id,
+                    // unit_price: type.price,
+                    price: req.body.price,
+                    total: req.body.total,
+                    sub_category_id: req.body.sub_category_id,
+                    quantity: req.body.quantity,
+                    weight: req.body.weight,
+                    unit: req.body.unit,
+                    unit_weight: req.body.unit_weight,
+                    user_id: req.body.user_id,
+                    equipment_pin: req.body.equipment_pin,
+                    created_at: Date.now(),
+                    updated_at: Date.now()
+                }); 
+                log.save()
+            .then(data => {
+                res.status(201).json({log: data, error: false, message: "equipment saved successful!" });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(401).send({error: true, message: "Failed to save equipment"});
+            });
+    });
+    // return res.status(200).send({error: false, message: 'working on this data wil get back to you'});
 };
 
 

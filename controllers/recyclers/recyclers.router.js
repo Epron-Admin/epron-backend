@@ -18,7 +18,7 @@ const router = express.Router();
 router.get('/pickups', fetch_all_pickup_by_location);
 router.get('/center_ewastes', fetch_ewaste_by_collection_center);
 router.get('/center-ewastes-pickedup', fetch_ewaste_by_collection_center_pickedup);
-router.get('/center-ewastes-ready-pickup', fetch_ewaste_by_collection_center_ready_for_pickup);
+router.get('/center-ewastes-ready-pickup/:id', fetch_ewaste_by_collection_center_ready_for_pickup);
 router.post('/log_ewaste_weight', log_weight_from_collection_center_ewaste);
 router.get('/recycler-logged-waste-weight/:recycler_id', fetch_logewaste_weight_by_recycler);
 router.get('/recycler-collection-centers/:recycler_id', fetch_recyclers_collection_center);
