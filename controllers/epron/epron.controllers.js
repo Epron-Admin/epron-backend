@@ -613,43 +613,43 @@ export const fetch_all_loged_ewaste = async (req, res) => {
     });
 }
 
-export const asign_recycler_to_collection_center = (req, res) => {
-    //  the user_id is the id of the user which is a collection center or collector while signing up
-    Collection.findOne({user_id: req.body.collector_user_id}).exec((err, center) => {
-        if (
-            (!req.body.collector_user_id)
-            (!req.body.recycler_user_id)
-        ) {
-            return res.status(401).send({error: true, message: "Collection center ID, and recycler ID are required"});
-        }
-        if (err) {
-            return res.json({error: true, status: 401, message: "An error occured"})
-        }
-        if (!center) {
-            res.send({code: 404, error: true, message: 'Can not find collection center' });
-        }
-        // if (center.role != 'recycler') {
-        //     res.send({code: 404, error: true, message: 'user not a recycler' });
-        // }
-        else {
-            // the recycler id id the id of the user who is a recycler in this case.
-            const index = center.recyclers.includes(req.body.recycler_user_id);
-            console.log("index", index);
-            if (index === false) {
-                center.recyclers.push(req.body.recycler_user_id);
-                center.save().then(result => {
-                    res.json({ error: false, code: 200, status: 'success', message: 'user has been asigned to collection center'});
-                }).catch(err => {
-                    // console.log(err.code);
-                    res.send({ error: true, message: 'failed to asign user to collection' });
-                });
-            } else {
-                res.send({ error: true, message: 'user already asigned to this collection center' });
-            }
-        }
+// export const asign_recycler_to_collection_center = (req, res) => {
+//     //  the user_id is the id of the user which is a collection center or collector while signing up
+//     Collection.findOne({user_id: req.body.collector_user_id}).exec((err, center) => {
+//         if (
+//             (!req.body.collector_user_id)
+//             (!req.body.recycler_user_id)
+//         ) {
+//             return res.status(401).send({error: true, message: "Collection center ID, and recycler ID are required"});
+//         }
+//         if (err) {
+//             return res.json({error: true, status: 401, message: "An error occured"})
+//         }
+//         if (!center) {
+//             res.send({code: 404, error: true, message: 'Can not find collection center' });
+//         }
+//         // if (center.role != 'recycler') {
+//         //     res.send({code: 404, error: true, message: 'user not a recycler' });
+//         // }
+//         else {
+//             // the recycler id id the id of the user who is a recycler in this case.
+//             const index = center.recyclers.includes(req.body.recycler_user_id);
+//             console.log("index", index);
+//             if (index === false) {
+//                 center.recyclers.push(req.body.recycler_user_id);
+//                 center.save().then(result => {
+//                     res.json({ error: false, code: 200, status: 'success', message: 'user has been asigned to collection center'});
+//                 }).catch(err => {
+//                     // console.log(err.code);
+//                     res.send({ error: true, message: 'failed to asign user to collection' });
+//                 });
+//             } else {
+//                 res.send({ error: true, message: 'user already asigned to this collection center' });
+//             }
+//         }
         
-    })
-}
+//     })
+// }
 
 export const remove_recycler_to_collection_center = (req, res) => {
     //  the user_id is the id of the user which is a collection center or collector while signing up
@@ -1254,20 +1254,20 @@ export const search_logged_equipment_with_varibles  = (req, res, next) => {
         if (!user) {
             return res.status(401).send({error: true, code: 404, message: "User not found"});
         }
-        // console.log("User serced for", user);
+        console.log("User serced for", user);
         // return res.send({error: false, message: "User searched done", user});
 
-        Log.find({ user_id: user[0]._id }).populate('category_id').populate('sub_category_id').populate('user_id').exec((err, search) => {
-        if (err) {
-            console.log(err);
-            return res.send(err);
-        }
-        res.json({search, user});
-        // console.log('search', search);
-        }),((err) => {
-            // console.log(err);
-            res.send({error: true, message: 'An error while seaching logged equipment'});
-        });
+        // Log.find({ user_id: user[0]._id }).populate('category_id').populate('sub_category_id').populate('user_id').exec((err, search) => {
+        // if (err) {
+        //     console.log(err);
+        //     return res.send(err);
+        // }
+        // res.json({search, user});
+        // // console.log('search', search);
+        // }),((err) => {
+        //     // console.log(err);
+        //     res.send({error: true, message: 'An error while seaching logged equipment'});
+        // });
 
     })
 
@@ -1393,6 +1393,181 @@ export const find_user_by_specific_date = async (req, res) => {
             return res.json({error: true, status: 404, message: "Cant not find users"})
         }
         return res.json({error: false, status: 201, total_users: total_users, pagination: results, users: users, message: "success!" });
+    });
+}
+
+export const find_equipment_by_date_range = async (req, res) => {
+
+    let { startDate, endDate } = req.query;
+
+    if(startDate === '' || endDate === '') {
+        return res.status(400).json({
+            status:'failure',
+            message: 'Please ensure you pick two dates'
+        })
+    }
+     
+       //2. check that date is in the right format
+      //expected result: YYY-MMM-DDD
+        // console.log({ startDate, endDate});
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_equipments = await Log.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec();
+
+    if (endIndex <  await Log.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    // $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    // $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+    Log.find({ 
+        created_at: {
+            $gte: new Date(new Date(startDate).setHours(0, 0, 0)),
+            $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+            //   $gte: new Date(new Date(startDate)),
+            //   $lt: new Date(new Date(endDate))
+               }
+        }).sort('-created_at').limit(limit).skip(startIndex).populate('user_id').exec((err, equipments) => {
+        // console.log("equipments", equipments)
+        if (err) {
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "error occured"})
+        }
+        if (!equipments) {
+            return res.json({error: true, status: 404, message: "Cant not find users"})
+        }
+        return res.json({error: false, status: 201, total_equipments: total_equipments, pagination: results, equipments: equipments, message: "success!" });
+    });
+}
+
+export const search_ewaste_by_date_range = async (req, res) => {
+
+    let { startDate, endDate } = req.query;
+
+    if(startDate === '' || endDate === '') {
+        return res.status(400).json({
+            status:'failure',
+            message: 'Please ensure you pick two dates'
+        })
+    }
+     
+       //2. check that date is in the right format
+      //expected result: YYY-MMM-DDD
+        // console.log({ startDate, endDate});
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_ewastes = await Ewaste.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec();
+
+    if (endIndex <  await Ewaste.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    // $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    // $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+    Ewaste.find({ 
+        created_at: {
+            $gte: new Date(new Date(startDate).setHours(0, 0, 0)),
+            $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+            //   $gte: new Date(new Date(startDate)),
+            //   $lt: new Date(new Date(endDate))
+               }
+        }).sort('-created_at').limit(limit).skip(startIndex).populate('user_id').exec((err, ewaste) => {
+        // console.log("equipments", equipments)
+        if (err) {
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "error occured"})
+        }
+        if (!ewaste) {
+            return res.json({error: true, status: 404, message: "Cant not find users"})
+        }
+        return res.json({error: false, status: 201, total_ewastes: total_ewastes, pagination: results, ewaste: ewaste, message: "success!" });
+    });
+}
+
+
+export const search_recyclerEwaste_by_date_range = async (req, res) => {
+
+    let { startDate, endDate } = req.query;
+
+    if(startDate === '' || endDate === '') {
+        return res.status(400).json({
+            status:'failure',
+            message: 'Please ensure you pick two dates'
+        })
+    }
+     
+       //2. check that date is in the right format
+      //expected result: YYY-MMM-DDD
+        // console.log({ startDate, endDate});
+
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const results = {};
+
+    const total_recyclerEwastes = await RecyclerWaste.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec();
+
+    if (endIndex <  await RecyclerWaste.countDocuments({created_at: { $gte: new Date(new Date(startDate).setHours(0, 0, 0)), $lt: new Date(new Date(endDate).setHours(23, 59, 59)) }}).exec()) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+    // $gte: new Date(new Date(startDate).setHours(00, 00, 00)),
+    // $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+    RecyclerWaste.find({ 
+        created_at: {
+            $gte: new Date(new Date(startDate).setHours(0, 0, 0)),
+            $lt: new Date(new Date(endDate).setHours(23, 59, 59))
+            //   $gte: new Date(new Date(startDate)),
+            //   $lt: new Date(new Date(endDate))
+               }
+        }).sort('-created_at').limit(limit).skip(startIndex).populate('user_id').exec((err, ewaste) => {
+        // console.log("equipments", equipments)
+        if (err) {
+            // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+            return res.json({error: true, status: 401, message: "error occured"})
+        }
+        if (!ewaste) {
+            return res.json({error: true, status: 404, message: "Cant not find users"})
+        }
+        return res.json({error: false, status: 201, total_recyclerEwastes: total_recyclerEwastes, pagination: results, ewaste: ewaste, message: "success!" });
     });
 }
 

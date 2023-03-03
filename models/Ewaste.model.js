@@ -63,6 +63,8 @@ let ewaste = new Schema({
     }
 });
 
+// newUser.index({ name : 'text', email : 'text' });
+
 
 
 export default mongoose.model('Ewaste', ewaste);

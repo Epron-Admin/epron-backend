@@ -267,7 +267,7 @@ export const fetch_ewaste_by_user = async (req, res) => {
             limit: limit
         }
     }
-    Ewaste.find({user_id: req.params.id}).populate('category_id').populate('sub_category_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, waste) => {
+    Ewaste.find({user_id: req.params.id}).populate('category_id').populate('sub_category_id').populate('user_id').sort('-created_at').limit(limit).skip(startIndex).exec((err, waste) => {
         // console.log("ewasteeeeeeeeeeeeeeeee", waste)
         if (err) {
             console.log(err);

@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import { 
     approved_documents_oem,
     asign_collection_center_to_recyclers,
-    asign_recycler_to_collection_center,
+    // asign_recycler_to_collection_center,
     block_user,
     dashboard_counts,
     disapprove_documents_oem,
@@ -28,6 +28,7 @@ import {
     fetch_user_loged_equiptment_paid_status_oem,
     find_all_collection_center,
     find_all_user_based_on_verified_status,
+    find_equipment_by_date_range,
     // find_user_by_date,
     find_user_by_date_range,
     find_user_by_specific_date,
@@ -38,7 +39,9 @@ import {
     remove_log_category,
     remove_log_type,
     remove_unverified_user,
+    search_ewaste_by_date_range,
     search_logged_equipment_with_varibles,
+    search_recyclerEwaste_by_date_range,
     search_user_varibles,
     // remove_recycler_to_collection_center,
     unblock_user,
@@ -72,6 +75,10 @@ router.patch('/block_user/:id', block_user);
 router.get('/filter_by_date_range', find_user_by_date_range);
 router.get('/filter_by_date', find_user_by_specific_date);
 
+router.get('/filter_equipment_by_date', find_equipment_by_date_range);
+router.get('/filter_ewaste_by_date', search_ewaste_by_date_range);
+router.get('/filter_recyclerewaste_by_date', search_recyclerEwaste_by_date_range);
+
 router.get('/fetch-all-logged-equipments', fetch_users_loged_equiptment_oem);
 router.get('/fetch-all-logged-equipments-paid-status', fetch_user_loged_equiptment_paid_status_oem);
 
@@ -82,7 +89,7 @@ router.get('/pickups_based_on_acceptance', fetch_all_pickup_based_on_acceptance)
 router.get('/all_collection_center', find_all_collection_center);
 router.get('/fetch-recycler-with-collection-centers/:collection_center/:recycler_id', fetch_recyclers_with_colection_center);
 router.get('/fetch_one_center_byid/:id', fetch_collection_center_byId);
-router.patch('/asign_recycler', asign_recycler_to_collection_center);
+// router.patch('/asign_recycler', asign_recycler_to_collection_center);
 // router.patch('/remove_recycler', remove_recycler_to_collection_center);
 
 router.delete('/removed-unverified_user/:id', remove_unverified_user);
