@@ -42,6 +42,7 @@ import {
     search_ewaste_by_date_range,
     search_logged_equipment_with_varibles,
     search_recyclerEwaste_by_date_range,
+    search_requestedPickups_by_date_range,
     search_user_varibles,
     // remove_recycler_to_collection_center,
     unblock_user,
@@ -78,6 +79,7 @@ router.get('/filter_by_date', find_user_by_specific_date);
 router.get('/filter_equipment_by_date', find_equipment_by_date_range);
 router.get('/filter_ewaste_by_date', search_ewaste_by_date_range);
 router.get('/filter_recyclerewaste_by_date', search_recyclerEwaste_by_date_range);
+router.get('/filter_requestedpickups_by_date', search_requestedPickups_by_date_range);
 
 router.get('/fetch-all-logged-equipments', fetch_users_loged_equiptment_oem);
 router.get('/fetch-all-logged-equipments-paid-status', fetch_user_loged_equiptment_paid_status_oem);
