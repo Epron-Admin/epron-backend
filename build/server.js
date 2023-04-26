@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -12,8 +14,6 @@ var _cors = _interopRequireDefault(require("cors"));
 var _bodyParser = _interopRequireDefault(require("body-parser"));
 
 var _db = _interopRequireDefault(require("./config/db.js"));
-
-var _dotenv = _interopRequireDefault(require("dotenv"));
 
 var _accessRouter = _interopRequireDefault(require("./controllers/access/access.router.js"));
 
@@ -29,18 +29,16 @@ var _collectionRouter = _interopRequireDefault(require("./controllers/collection
 
 var _uploads = _interopRequireDefault(require("./uploads.js"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+var _dotenv = _interopRequireDefault(require("dotenv"));
 
 // import mongoose from 'mongoose';
 // import balocodes from 'balocodes/express';
 // const accessRouter = require('./controllers/access/access.router.js');
 // const userRouter = require('./controllers/users/users.router.js');
-// import uploadRouter from './upload';
+// import uploadRouter from './sr./uploads.jsmport uploadRouter from './upload';
 // import verifier from 'email-verifier';
 //Load config files
-_dotenv["default"].config({
-  path: './config/config.env'
-});
+_dotenv["default"].config();
 
 var app = (0, _express["default"])();
 (0, _db["default"])();
@@ -68,3 +66,4 @@ var server = app.listen(port, function () {
 var _default = server; // module.exports = server;
 
 exports["default"] = _default;
+//# sourceMappingURL=server.js.map
