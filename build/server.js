@@ -38,7 +38,8 @@ var _dotenv = _interopRequireDefault(require("dotenv"));
 // import uploadRouter from './sr./uploads.jsmport uploadRouter from './upload';
 // import verifier from 'email-verifier';
 //Load config files
-_dotenv["default"].config();
+_dotenv["default"].config(); // dotenv.config({ path: './config/config.env'});
+
 
 var app = (0, _express["default"])();
 (0, _db["default"])();

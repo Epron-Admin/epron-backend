@@ -356,16 +356,16 @@ export const reg_user_erpon = (req, res, next) => {
                     let mailTransporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
-                            user: 'charlesamos003@gmail.com',
+                            user: 'epronnigeria@gmail.com',
                             pass: 'xwytgfmmdpdnbajp'
                         }
                     });
                      
                     let mailDetails = {
-                        from: 'Epron Admin <empron@gmail.com>',
+                        from: 'Epron Admin <epronnigeria@gmail.com>',
                         to: req.body.email,
                         subject: 'Epron Registration',
-                        text: 'You are receiving this because Epron have requested to sign you up as admin on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epron.netlify.app/verify/' + token + '\n\n' +
+                        text: 'You are receiving this because Epron have requested to sign you up as admin on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' +
                         'If you did not request this, please ignore this email and your registration will be canceled.\n\n' + ' Your password is ' + (req.body.password) + ' you can change it at anytime for privacy.'
                     };
                      

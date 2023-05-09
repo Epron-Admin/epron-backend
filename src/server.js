@@ -21,6 +21,7 @@ import dotenv from 'dotenv';
 
 //Load config files
 dotenv.config();
+// dotenv.config({ path: './config/config.env'});
 
 
 const app = express();
