@@ -26,7 +26,7 @@ var _mailgunJs = _interopRequireDefault(require("mailgun-js"));
 // import Collection from '../../models/CollectionCenter.model.js';
 var API_KEY = 'a2e391c08729f67397de943776f87024-46ac6b00-d975f38b'; // var DOMAIN = 'sandbox086e0a8d8f2f4b748fb92de88df70842.mailgun.org';
 
-var DOMAIN = 'http://epronregister.com.ng'; // var DOMAIN = 'www.epron.netlify.app.com'
+var DOMAIN = 'https://epronregister.com.ng'; // var DOMAIN = 'www.epron.netlify.app.com'
 
 var mailgun = new _mailgunJs["default"]({
   apiKey: API_KEY,
@@ -133,7 +133,7 @@ var reg_userx = function reg_userx(req, res) {
           from: 'Epron Admin <empron@gmail.com>',
           to: req.body.email,
           subject: 'Epron Registration',
-          text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
+          text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/verify/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
         };
         mailTransporter.sendMail(mailDetails, function (err, data) {
           // console.log("Dattttttttttttaaaaaaaa", data);
@@ -278,7 +278,7 @@ var reg_user_fake = function reg_user_fake(req, res) {
           from: 'Epron Admin <epronnigeria@gmail.com>',
           to: req.body.email,
           subject: 'Epron Registration',
-          text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
+          text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/verify/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
         };
         mailTransporter.sendMail(mailDetails, function (err, data) {
           // console.log("Dattttttttttttaaaaaaaa", data);
@@ -360,7 +360,7 @@ var generate_verify_token_validate_user = function generate_verify_token_validat
       from: 'Epron Admin <epronnigeria@gmail.com>',
       to: req.body.email,
       subject: 'Epron Registration',
-      text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
+      text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/verify/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
     };
     mailTransporter.sendMail(mailDetails, function (err, data) {
       // console.log("Dattttttttttttaaaaaaaa", data);
@@ -521,7 +521,7 @@ var reg_user2 = function reg_user2(req, res, next) {
           from: 'Epron Admin <epronnigeria@gmail.com>',
           to: req.body.email,
           subject: 'Registration validation',
-          text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/users/verify-user/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
+          text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/users/verify-user/' + token + '\n\n' + 'If you did not request this, please ignore this email and your registration will be canceled'
         };
         mailgun.messages().send(data, function (error, body) {
           if (error) {
