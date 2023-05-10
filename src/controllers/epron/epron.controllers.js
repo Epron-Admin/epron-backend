@@ -357,7 +357,7 @@ export const reg_user_erpon = (req, res, next) => {
                         service: 'gmail',
                         auth: {
                             user: 'epronnigeria@gmail.com',
-                            pass: 'xwytgfmmdpdnbajp'
+                            pass: 'fpzoqihwtdstymgx'
                         }
                     });
                      

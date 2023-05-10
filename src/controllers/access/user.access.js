@@ -71,43 +71,13 @@ export const reg_userx = (req, res) => {
                         done(err, token);
                     });
                 },
-                (token, done) => {
-                    // User.findOne({email: req.body.email}).exec
-                    User.findOne({ email: req.body.email }, (err, user) => {
-                        // userEmail = req.body.email;
-                        // console.log('User', user);
-                        if (!user) {
-                            // req.flash('error', 'No account with that email address exists.');
-                            // return next(new Error('No account with that email address exists.'));
-                            return res.send({error: true, message: 'Email address does not exists.'});
-        
-                        }
-                        user.verifyToken = token;
-                        user.verifyTokenExpires = Date.now() + 3600000;
-        
-                        user.save(function (err) {
-                            done(err, token, user);
-                        });
-                        // if (req.body.role === 'collector') {
-                        //     let collector = new Collection({
-                        //         user_id: user._id,
-                                
-                        //     });
-                        //     collector.save().then((result) => {
-                        //         // console.log("resilt of center", result);
-                        //     }).catch(err => {
-                        //         // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
-                        //         return res.send({error: true, code: 401, message: "Failed to add new user to center"});
-                        //     });
-                        // }
-                    });
-                },
+                
                 (token, user, done) => {
                     let mailTransporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
                             user: 'epronnigeria@gmail.com',
-                            pass: 'xwytgfmmdpdnbajp'
+                            pass: 'fpzoqihwtdstymgx'
                         }
                     });
                      
@@ -122,14 +92,33 @@ export const reg_userx = (req, res) => {
                     mailTransporter.sendMail(mailDetails, function(err, data) {
                         // console.log("Dattttttttttttaaaaaaaa", data);
                         if(err) {
-                            // console.log('Error Occurs', err);
+                            console.log('Error Occurs', err);
                             return res.send({error: true, code: 401, message: "Failed to add new unverified user"});
                         } else {
                             // console.log('Email sent successfully');
                             return res.json({error: false, code: 201, status: 'success', message: 'Token sent to your email'});
                         }
                     });
-                }
+                },
+                // (token, done) => {
+                //     // User.findOne({email: req.body.email}).exec
+                //     User.findOne({ email: req.body.email }, (err, user) => {
+                //         // userEmail = req.body.email;
+                //         console.log('User', user);
+                //         if (!user) {
+                //             // req.flash('error', 'No account with that email address exists.');
+                //             // return next(new Error('No account with that email address exists.'));
+                //             return res.send({error: true, message: 'Email address does not exists.'});
+        
+                //         }
+                //         user.verifyToken = token;
+                //         user.verifyTokenExpires = Date.now() + 3600000;
+        
+                //         user.save(function (err) {
+                //             done(err, token, user);
+                //         });
+                //     });
+                // },
             ]).catch(err => {
             console.log(err);
             return res.send({err});
@@ -229,7 +218,7 @@ export const reg_user_fake = (req, res) => {
                         service: 'gmail',
                         auth: {
                             user: 'epronnigeria@gmail.com',
-                            pass: 'xwytgfmmdpdnbajp'
+                            pass: 'fpzoqihwtdstymgx'
                         }
                     });
                      
@@ -300,7 +289,7 @@ export const generate_verify_token_validate_user = (req, res, next) => {
                 service: 'gmail',
                 auth: {
                     user: 'epronnigeria@gmail.com',
-                    pass: 'xwytgfmmdpdnbajp'
+                    pass: 'fpzoqihwtdstymgx'
                 }
             });
              
@@ -342,7 +331,7 @@ export const verify_user = (req, res, next) => {
              if (!user) {
                    // console.log('password from front: ', req.body);
                    // return next(new Error('Password reset token is invalid or has expired.'));
-                   return res.send({message: 'Password reset token has expired, or user not found.'});
+                   return res.send({message: 'User verify token has expired, or user not found.'});
                    // req.flash('success', 'Password reset token is invalid or has expired.');
                    // return res.redirct('back');
                }

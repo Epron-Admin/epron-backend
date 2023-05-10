@@ -303,7 +303,7 @@ export const forgot_password = (req, res, next) => {
                 service: 'gmail',
                 auth: {
                     user: 'epronnigeria@gmail.com',
-                    pass: 'xwytgfmmdpdnbajp'
+                    pass: 'fpzoqihwtdstymgx'
                 }
             });
 
@@ -377,7 +377,7 @@ export const password_reset = (req, res, next) => {
                                 service: 'gmail',
                                 auth: {
                                     user: 'charlesamos003@gmail.com',
-                                    pass: 'xwytgfmmdpdnbajp'
+                                    pass: 'fpzoqihwtdstymgx'
                                 }
                             });
                             let mailDetails = {
