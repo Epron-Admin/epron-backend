@@ -362,7 +362,7 @@ export const reg_user_erpon = (req, res, next) => {
                     });
                      
                     let mailDetails = {
-                        from: 'Epron Admin <epronnigeria@gmail.com>',
+                        from: `Epron Admin <epronnigeria@gmail.com>`,
                         to: req.body.email,
                         subject: 'Epron Registration',
                         text: 'You are receiving this because Epron have requested to sign you up as admin on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' +

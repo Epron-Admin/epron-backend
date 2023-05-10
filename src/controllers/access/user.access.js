@@ -82,7 +82,7 @@ export const reg_userx = (req, res) => {
                     });
                      
                     let mailDetails = {
-                        from: 'Epron Admin <empron@gmail.com>',
+                        from: `Epron Admin <epronnigeria@gmail.com>`,
                         to: req.body.email,
                         subject: 'Epron Registration',
                         text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' +
@@ -223,7 +223,7 @@ export const reg_user_fake = (req, res) => {
                     });
                      
                     let mailDetails = {
-                        from: 'Epron Admin <epronnigeria@gmail.com>',
+                        from: `Epron Admin <epronnigeria@gmail.com>`,
                         to: req.body.email,
                         subject: 'Epron Registration',
                         text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' +
@@ -294,7 +294,7 @@ export const generate_verify_token_validate_user = (req, res, next) => {
             });
              
             let mailDetails = {
-                from: 'Epron Admin <epronnigeria@gmail.com>',
+                from: `Epron Admin <epronnigeria@gmail.com>`,
                 to: req.body.email,
                 subject: 'Epron Registration',
                 text: 'You are receiving this because you (or someone else) have requested to signup on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/verify/' + token + '\n\n' +
@@ -395,7 +395,7 @@ export const verify_user = (req, res, next) => {
             }
             user.save()
             .then((dataRes) => {
-                console.log("dataaaaaa", dataRes);
+                // console.log("dataaaaaa", dataRes);
                 // res.status(201).json({'user': dataRes, error: false, status: 'success', message: "Registration successful!", code: 201 });
                 async.waterfall([
                     (done) => {

@@ -308,7 +308,7 @@ export const forgot_password = (req, res, next) => {
             });
 
             let mailDetails = {
-                from: 'Epron Admin <epronnigeria@gmail.com>',
+                from: `Epron Admin <epronnigeria@gmail.com>`,
                 to: req.body.email,
                 subject: 'Reset your password',
                 text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'http://epronregister.com.ng/users/reset-reset/' + token + '\n\n' +
@@ -376,15 +376,15 @@ export const password_reset = (req, res, next) => {
                             let mailTransporter = nodemailer.createTransport({
                                 service: 'gmail',
                                 auth: {
-                                    user: 'charlesamos003@gmail.com',
+                                    user: 'epronnigeria@gmail.com',
                                     pass: 'fpzoqihwtdstymgx'
                                 }
                             });
                             let mailDetails = {
-                                from: 'Epron Admin <empron@gmail.com>',
+                                from: `Epron Admin <epronnigeria@gmail.com>`,
                                 to: req.body.email,
                                 subject: 'Password has been changed',
-                                text: 'Hello,\n\n' + ' This is a confirmation that the password for your accout ' + user.email + ' has just been changed'
+                                text: 'Hello,\n\n' + ' This is a confirmation that the password for your account ' + user.email + ' has just been changed'
                             };
 
                             mailTransporter.sendMail(mailDetails, function(err, data) {
