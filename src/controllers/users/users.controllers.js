@@ -2,6 +2,7 @@
 import User from '../../models/User.model.js'
 import Log from '../../models/Log.model.js';
 import Types from '../../models/CategoryTypes.model.js';
+import Contactus from '../../models/Contactus.model.js';
 import querystring from 'querystring';
 // import GenCtrl from  '@balocodes/express';
 // import MailController from '@balocodes/express';
@@ -29,6 +30,7 @@ import NaijaStates from 'naija-state-local-government';
 import express from 'express';
 
 const paystack = new Paystack('sk_test_72c8ff80984a6f3e15c931b9485f55474ea36e81');
+
 
 
 
@@ -61,7 +63,7 @@ export const get_customers = (req, res) => {
     });
 }; 
   
-export const initialize_transanction = (req, res) => {
+export const initialize_transaction = (req, res) => {
     paystack.transaction.initialize({
         email: req.body.email,
         amount: Number(req.body.amount) * 100
@@ -1137,6 +1139,50 @@ export const get_price_of_equipment_for_payment = (req, res) => {
         return res.status(201).send({error: false, message: "success", total_payment: total_payment});
 
     });
+};
+
+export const feedback = async (req, res) => {
+    // User.findOne({ email: req.body.email }).exec((err, user) => {
+        if (
+            (!req.body.email) ||
+            (!req.body.name) ||
+            (!req.body.phone) ||
+            (!req.body.message) ||
+            (!req.body.company)
+            ) {
+            return res.status(401).send({error: true, message: "Name, email, phone, company, message are required"});
+        }  
+            let mailTransporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'epronnigeria@gmail.com',
+                    pass: 'fpzoqihwtdstymgx'
+                }
+            });
+             
+            let mailDetails = {
+                from: `${req.body.name} ${req.body.email} <charlesamos003@gmail.com>`,
+                to: `epronnigeria@gmail.com`,
+                subject: 'Feedback',
+                text: req.body.message
+            };
+             
+            await mailTransporter.sendMail(mailDetails, function(err, data) {
+                console.log("Dattttttttttttaaaaaaaa", data);
+                if(err) {
+                    console.log('Error Occurs', err);
+                    return res.send({error: true, code: 401, message: "Error occured"});
+                } else {
+                    // console.log('Email sent successfully');
+                    return res.json({error: false, code: 201, status: 'success', message: 'Message sent to Epron'});
+                }
+            });
+        // },
+        
+    // }).catch(err => {
+    //     // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+    //     return res.send({error: true, code: 401, message: "Failed to send feedback"});
+    // });
 }
 
 

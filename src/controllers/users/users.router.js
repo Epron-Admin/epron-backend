@@ -26,12 +26,13 @@ import {
 		find_user_by_role,
 		find_user_byid,
 		find_collection_center_by_location,
-		initialize_transanction,
+		initialize_transaction,
 		update_payment_option,
 		update_multiple_payment_options,
 		fetch_user_loged_equiptment_byid_paid_status,
 		excel_bulk_equipment,
-		get_price_of_equipment_for_payment
+		get_price_of_equipment_for_payment,
+		feedback
 		// mail1
 	} from './users.controllers.js';
 import { validationFunc } from '../../middleware/middleware.js';
@@ -75,6 +76,8 @@ router.get("/user/:id", find_user_byid);
 
 router.get('/collection_by_location/:lga', find_collection_center_by_location);
 
+router.post('/contactus', feedback);
+
 
 
 router.post('/excel-equipment', excel_bulk_equipment);
@@ -83,7 +86,7 @@ router.get('/payment-amount/:pin', get_price_of_equipment_for_payment);
 
 // paystck payment
 router.get('/customers', get_customers);
-router.post('/init-transaction', initialize_transanction);
+router.post('/init-transaction', initialize_transaction);
 router.patch('/update-payment-status/:pin/:ref', update_payment_option);
 
 

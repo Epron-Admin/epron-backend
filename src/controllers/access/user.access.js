@@ -276,12 +276,15 @@ export const generate_verify_token_validate_user = (req, res, next) => {
                     return res.send({error: true, message: 'Email address does not exists.'});
 
                 }
-                user.verifyToken = token;
-                user.verifyTokenExpires = Date.now() + 3600000;
-
-                user.save(function (err) {
-                    done(err, token, user);
-                });
+                if (user.verified === false) {
+                    user.verifyToken = token;
+                    user.verifyTokenExpires = Date.now() + 3600000;
+    
+                    user.save(function (err) {
+                        done(err, token, user);
+                    });
+                }
+               
             });
         },
         (token, user, done) => {
@@ -450,7 +453,7 @@ export const verify_user = (req, res, next) => {
                 })
             })
             .catch(err => {
-                console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
+                // console.log("errrrrrrrrrrrrrrrrrrrrrr", err);
                 return res.send({error: true, code: 401, message: "Failed to add new user"});
             });
         });

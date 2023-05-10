@@ -19,11 +19,13 @@ export const request_pickup = (req, res) => {
         (!req.body.phoneNumber) ||
         (!req.body.lga) ||
         (!req.body.state) ||
-        (!req.body.description) ||
-        (!req.body.pickup_date)
+        (!req.body.pickup_date) ||
+        (!req.body.category_id) ||
+        (!req.body.sub_category_id) ||
+        (!req.body.quantity)
         ) {
         // console.log("All not filled");
-        return res.status(401).send({error: true, message: "Name, address, phone, lga, pickup date, description and state are required"});
+        return res.status(401).send({error: true, message: "Name, address, phone, lga, pickup date, category, types, quantity and state are required"});
     } 
     const code = Math.random().toString(36).slice(2, 7);
     let pickup = new RequestPickup({
@@ -31,7 +33,10 @@ export const request_pickup = (req, res) => {
         phoneNumber: req.body.phoneNumber,
         address: req.body.address,
         request_code: code,
-        cuntry: req.body.country,
+        country: 'Nigeria',
+        category_id: req.body.category_id,
+        sub_category_id: req.body.sub_category_id,
+        quantity: req.body.quantity,
         // city: req.body.city,
         state: req.body.state,
         lga: req.body.lga,
@@ -75,7 +80,7 @@ export const fetch_all_pickup = async (req, res) => {
             limit: limit
         }
     }
-    RequestPickup.find({}).sort('-created_at').populate("accepted_by").limit(limit).skip(startIndex).exec((err, requestpickup) => {
+    RequestPickup.find({}).sort('-created_at').populate("accepted_by").populate("category_id").populate("sub_category_id").limit(limit).skip(startIndex).exec((err, requestpickup) => {
         if (err) {
             console.log(err);
             return res.json({error: true, status: 401, message: "Failed fetch all request pickups"})

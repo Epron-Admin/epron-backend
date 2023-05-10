@@ -24,6 +24,20 @@ let requestPickup = new Schema({
         type: String,
         required: true
     },
+    category_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "Category"
+    },
+    sub_category_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "CategoryTypes"
+    },
+    quantity: {
+        type: Number,
+        required: true
+    },
     // stateid: {
     //     type: String,
     //     required: true
@@ -58,8 +72,7 @@ let requestPickup = new Schema({
         required: true
     },
     description: {
-        type: String,
-        required: true
+        type: String
     },
     pickup_date: {
         type: Date,
