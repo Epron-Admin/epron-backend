@@ -1161,7 +1161,7 @@ export const feedback = async (req, res) => {
             });
              
             let mailDetails = {
-                from: `${req.body.name} ${req.body.email} <charlesamos003@gmail.com>`,
+                from: `${req.body.name} ${req.body.email} <epronnigeria@gmail.com>`,
                 to: `epronnigeria@gmail.com`,
                 subject: 'Feedback',
                 text: req.body.message
