@@ -1168,7 +1168,7 @@ export const feedback = async (req, res) => {
             };
              
             await mailTransporter.sendMail(mailDetails, function(err, data) {
-                console.log("Dattttttttttttaaaaaaaa", data);
+                // console.log("Dattttttttttttaaaaaaaa", data);
                 if(err) {
                     console.log('Error Occurs', err);
                     return res.send({error: true, code: 401, message: "Error occured"});
