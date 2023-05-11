@@ -96,29 +96,29 @@ export const reg_userx = (req, res) => {
                             return res.send({error: true, code: 401, message: "Failed to add new unverified user"});
                         } else {
                             // console.log('Email sent successfully');
-                            return res.json({error: false, code: 201, status: 'success', message: 'Token sent to your email'});
+                            (token, done) => {
+                                // User.findOne({email: req.body.email}).exec
+                                User.findOne({ email: req.body.email }, (err, user) => {
+                                    // userEmail = req.body.email;
+                                    console.log('User', user);
+                                    if (!user) {
+                                        // req.flash('error', 'No account with that email address exists.');
+                                        // return next(new Error('No account with that email address exists.'));
+                                        return res.send({error: true, message: 'Email address does not exists.'});
+                    
+                                    }
+                                    user.verifyToken = token;
+                                    user.verifyTokenExpires = Date.now() + 3600000;
+                    
+                                    user.save(function (err) {
+                                        done(err, token, user);
+                                    });
+                                });
+                            },
+                            res.json({error: false, code: 201, status: 'success', message: 'Token sent to your email'});
                         }
                     });
                 },
-                // (token, done) => {
-                //     // User.findOne({email: req.body.email}).exec
-                //     User.findOne({ email: req.body.email }, (err, user) => {
-                //         // userEmail = req.body.email;
-                //         console.log('User', user);
-                //         if (!user) {
-                //             // req.flash('error', 'No account with that email address exists.');
-                //             // return next(new Error('No account with that email address exists.'));
-                //             return res.send({error: true, message: 'Email address does not exists.'});
-        
-                //         }
-                //         user.verifyToken = token;
-                //         user.verifyTokenExpires = Date.now() + 3600000;
-        
-                //         user.save(function (err) {
-                //             done(err, token, user);
-                //         });
-                //     });
-                // },
             ]).catch(err => {
             console.log(err);
             return res.send({err});
@@ -327,7 +327,7 @@ export const generate_verify_token_validate_user = (req, res, next) => {
 
 // Verify user by token
 export const verify_user = (req, res, next) => {
-    console.log("Request params", req);
+    // console.log("Request params", req);
     async.waterfall([
         (done) => {
            User.findOne({ verifyToken: req.params.token, verifyTokenExpires: { $gt: Date.now() } }, (err, user) => {
@@ -344,8 +344,8 @@ export const verify_user = (req, res, next) => {
                     res.json({ 'user': result });
                     //res.status(200).send({mssage: 'update successful'});
                 }).catch(err => {
-                    console.log(err.code);
-                    res.send({ error: true, message: 'failed to verify data' });
+                    // console.log(err.code);
+                    return res.send({ error: true, code: 401, message: 'Failed to verify data' });
                 });
                 return res.json({error: false, code: 201, status: 'success', message: 'User Verified'});
             }
