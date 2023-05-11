@@ -71,7 +71,25 @@ export const reg_userx = (req, res) => {
                         done(err, token);
                     });
                 },
-                
+                (token, done) => {
+                    // User.findOne({email: req.body.email}).exec
+                    User.findOne({ email: req.body.email }, (err, user) => {
+                        // userEmail = req.body.email;
+                        console.log('User', user);
+                        if (!user) {
+                            // req.flash('error', 'No account with that email address exists.');
+                            // return next(new Error('No account with that email address exists.'));
+                            return res.send({error: true, code: 401, message: 'Email address does not exists.'});
+        
+                        }
+                        user.verifyToken = token;
+                        user.verifyTokenExpires = Date.now() + 3600000;
+        
+                        user.save(function (err) {
+                            done(err, token, user);
+                        });
+                    });
+                },
                 (token, user, done) => {
                     let mailTransporter = nodemailer.createTransport({
                         service: 'gmail',
@@ -96,26 +114,7 @@ export const reg_userx = (req, res) => {
                             return res.send({error: true, code: 401, message: "Failed to add new unverified user"});
                         } else {
                             // console.log('Email sent successfully');
-                            (token, done) => {
-                                // User.findOne({email: req.body.email}).exec
-                                User.findOne({ email: req.body.email }, (err, user) => {
-                                    // userEmail = req.body.email;
-                                    console.log('User', user);
-                                    if (!user) {
-                                        // req.flash('error', 'No account with that email address exists.');
-                                        // return next(new Error('No account with that email address exists.'));
-                                        return res.send({error: true, message: 'Email address does not exists.'});
-                    
-                                    }
-                                    user.verifyToken = token;
-                                    user.verifyTokenExpires = Date.now() + 3600000;
-                    
-                                    user.save(function (err) {
-                                        done(err, token, user);
-                                    });
-                                });
-                            },
-                            res.json({error: false, code: 201, status: 'success', message: 'Token sent to your email'});
+                            return res.json({error: false, code: 201, status: 'success', message: 'Token sent to your email'});
                         }
                     });
                 },
