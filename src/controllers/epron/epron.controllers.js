@@ -181,9 +181,9 @@ export const update_sub_category = async (req, res) => {
                 if (err) {
                     return res.status(401).send({error: true, code: 401, message: "An error occcured"});
                 }
-                if (doc) {
-                    return res.send({error: true, message: 'sub category name already exists.'});
-                }
+                // if (doc) {
+                //     return res.send({error: true, message: 'sub category name already exists.'});
+                // }
                 types.name = req.body.name,
                 types.price = req.body.price,
                 types.category_id = req.body.category_id,
@@ -208,7 +208,7 @@ export const update_sub_category = async (req, res) => {
 export const remove_log_category = (req, res) => {
     Category.findByIdAndRemove({ _id: req.params.id }, (err, log) => {
         if (err) {
-            return res.json({error: true, status: 401, message: "failed to delete category"});
+            return res.json({error: true, status: 401, message: "error occuredd"});
         }
         if (!log) {
             return res.json({error: true, status: 404, message: "can not find category"});
@@ -216,9 +216,9 @@ export const remove_log_category = (req, res) => {
         else {
             Types.deleteMany({category_id: req.params.id}).exec((err, doc, next) => {
                 if (doc) {
-                    return res.send({error: true, message: 'success!', info: 'the deleted category has a sub category which has been deleted too'});
+                    return res.send({error: false, status: 201, message: 'success!', info: 'the deleted category if it has a sub category which has been deleted too'});
                 } else {
-                    return res.json({error: false, status: 201, message: "success!" });
+                    return res.json({error: true, status: 401, message: "failed to delete category!" });
                 }
             });
         }
@@ -1016,7 +1016,7 @@ export const remove_collection_center_recycler_user = (req, res) => {
                     //res.status(200).send({mssage: 'update successful'});
                 }).catch(err => {
                     // console.log(err.code);
-                    res.send({ error: true, message: 'failed to asign Collection center' });
+                    res.send({ error: true, message: 'failed to unasigncCollection center' });
                 });
             } else {
                 res.send({ error: true, code: 401, message: 'collection center was not asigned to this user' });
