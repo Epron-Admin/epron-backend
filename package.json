@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "epron for electronic waste collection",
   "main": "server.js",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "clean": "rm -rf build && mkdir build",
     "build-server": "babel -d ./build ./src -s",
