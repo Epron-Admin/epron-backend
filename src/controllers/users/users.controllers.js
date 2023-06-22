@@ -88,6 +88,7 @@ export const update_payment_option = (req, res) => {
         else {
             log[0].paid = true;
             log[0].reference = req.params.ref;
+            log[0].pelpay_merchantRef = req.params.merchantRef;
             log[0].save().then(result => {
                 return res.json({error: false, status: 201, message: "Payment updated successfully!" });
             }).catch(err => {

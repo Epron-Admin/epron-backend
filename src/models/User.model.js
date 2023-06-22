@@ -6,6 +6,10 @@ import bcrypt from 'bcrypt';
 const Schema = mongoose.Schema;
 
 let newUser = new Schema({
+    // user_ref: {
+    //     type: String,
+    //     required: true
+    // },
     name: {
         type: String,
         required: true

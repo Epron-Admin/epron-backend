@@ -43,8 +43,14 @@ app.use('/recyclers', recyclersRouter);
 app.use('/centers', collectionRouter); 
 app.use('/upload', uploadRouter);
 
+
+// app.use('/', function (req, res) {
+// 	res.send('Welcome to Epron Backend');
+// });
+
+
 app.use('*', function (req, res) {
-	res.send('Welcome to Epron Backend, route not found');
+	res.send('Welcome to Epron Backend: 404, route not found');
 });
 
 

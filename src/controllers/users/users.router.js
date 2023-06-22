@@ -87,7 +87,7 @@ router.get('/payment-amount/:pin', get_price_of_equipment_for_payment);
 // paystck payment
 router.get('/customers', get_customers);
 router.post('/init-transaction', initialize_transaction);
-router.patch('/update-payment-status/:pin/:ref', update_payment_option);
+router.patch('/update-payment-status/:pin/:ref/:merchantRef', update_payment_option);
 
 
 

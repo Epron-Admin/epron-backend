@@ -9,19 +9,18 @@ import crypto from 'crypto';
 import async from 'async';
 // import Collection from '../../models/CollectionCenter.model.js';
 import RequestPickup from '../../models/RequestPickup.model.js';
-import RecyclerWaste from '../../models/RecyclerWaste.model.js'
+import RecyclerWaste from '../../models/RecyclerWaste.model.js';
 import Log from '../../models/Log.model.js';
+import schedule from 'node-schedule';
+import Pelpay from '../../models/Pelpay.model.js';
+import dotenv from 'dotenv';
+import  request from 'request';
+// import { response } from 'express';
+import { resolve } from 'path';
+dotenv.config();
 
-// import querystring from 'querystring';
-// const querystring = require('querystring');
+const config = process.env;
 
-// import Fake from '../../models/FakeUser.model.js'; // remove this import
-
-
-// var logged_eqiupment_weight;
-
-let bigshit;
- 
 
 
 export const new_category = (req, res) => {
@@ -1052,7 +1051,7 @@ export const fetch_recyclers_with_colection_center = (req, res) => {
         }
         else {
         
-            res.send({ error: true, data: user, message: 'success!' });
+            res.send({ error: false, data: user, message: 'success!' });
         }
         
     });
@@ -1628,6 +1627,166 @@ export const search_requestedPickups_by_date_range = async (req, res) => {
         return res.json({error: false, status: 201, total_requestedPickups: total_requestedPickups, pagination: results, requestedPickups: requestedPickups, message: "success!" });
     });
 }
+
+
+// async function main() {
+//     const res = await httpsPost({
+//         hostname: 'sentry.io',
+//         path: `/api/0/organizations/org/releases/${changesetId}/deploys/`,
+//         headers: {
+//             'Authorization': `Bearer ${process.env.SENTRY_AUTH_TOKEN}`,
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             environment: isLive ? 'production' : 'demo',
+//         })
+//     })
+// }
+
+// Pelpay paymet gateway for epron
+
+schedule.scheduleJob('*/60 * * * * *', async function() {
+    // This will run every Monday at 10:30;
+    // payment_login();
+    // console.log("environemt variables", config.PELPAYMENT_CLIENT_ID);
+    pelpay_payment_login();
+    // console.log('hey One Minute');
+});
+
+// schedule.scheduleJob('0 * * * *', async function() {
+//     // This will run every One Hour;
+//      pelpay_payment_login();
+//     console.log('hey! One Hour');
+// });
+
+
+export const pelpay_payment_login = (req, res) => {
+    request({
+        url: "https://api.pelpay.ng/api/Account/login",
+        method: "POST",
+        json: true,   // <--Very important!!!
+        body: paydata
+    }, 
+    function (error, req, body) {
+        if (!error) {
+            let token = new Pelpay({
+                access_token: body.access_token,
+                created_at: Date.now(),
+                updated_at: Date.now()
+            });
+            Pelpay.findOne((err, access) => {
+                // console.log('query data', access)
+                if (err) {
+                    console.log(err);
+                }
+                if (!access) {
+                    token.save().then(data => {
+                    res.status(201).json({token: data, error: false, message: "access token saved successful!" });
+                        console.log("new token", data);
+                    }).catch(err => {
+                        console.log(err);
+                        // res.status(401).send({error: true, message: "Failed to save access token"});
+                    });
+                } else {
+                    access.access_token = body.access_token,
+                    access.updated_at = Date.now()
+                    access.save().then(result => {
+                        // console.log("Updateeeeeeeeeeeeeeeee",  result);
+                        res.status(201).json({token: result, error: false, message: "token update successful" });
+                    }).catch(err => {
+                        // console.log(err);
+                        // res.send({ error: true, message: 'failed to update token' });
+                    });
+                }
+            });
+        }   
+        
+    });
+    
+}
+
+export const pelpay_advice = (req, res) => {
+    Pelpay.findOne((err, access) => {
+        // console.log('query data', access)
+        if (err) {
+            console.log(err);
+        }
+        if (access) {
+            console.log("Access key", access);
+            // Authorization
+            // req.headers['x-access-token'] =  access.access_token;
+            if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
+            req.body.integrationKey = process.env.INTEGRATION_KEY;
+          request({
+                url: "https://api.pelpay.ng/payment/advice",
+                method: "POST",
+                json: true, // <--Very important!!!
+                headers :{
+                    Authorization:"Bearer " + access.access_token // token
+                },
+                // Authorization: Bearer `${access.access_token}`,
+                body: req.body,
+                // response: res
+            },
+            (error, response, body) => {
+                // console.log("error advice", error)
+                console.log("Bodyyyyyyyy", req.body);
+                const jsonContent = JSON.stringify(response.body);
+                res.end(jsonContent);
+                
+            });
+        } else {
+            res.status(404).send({error: true, message: "access token not found in db"});
+        }
+    });
+}
+
+export const verify_payment = (req, res) => {
+    Pelpay.findOne((err, access) => {
+        // console.log('query data', access)
+        if (err) {
+            console.log(err);
+        }
+        if (access) {
+            console.log("Access key", access);
+            // Authorization
+            // req.headers['x-access-token'] =  access.access_token;
+            if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
+            req.body.integrationKey = process.env.INTEGRATION_KEY;
+          request({
+                url: `https://api.pelpay.ng/api/Transaction/bypaymentreference/${req.params.ref}`,
+                method: "GET",
+                json: true, // <--Very important!!!
+                headers :{
+                    Authorization:"Bearer " + access.access_token // token
+                },
+                // Authorization: Bearer `${access.access_token}`,
+                body: req.body,
+                // response: res
+            },
+            (error, response, body) => {
+                // console.log("error advice", error)
+                console.log("Bodyyyyyyyy", req.body);
+                const jsonContent = JSON.stringify(response.body);
+                res.end(jsonContent);
+                
+            });
+        } else {
+            res.status(404).send({error: true, message: "access token not found in db"});
+        }
+    });
+}
+
+const paydata = {
+    clientId: "Ken0000004",
+    clientSecret: "d36eb5dd-a89f-411a-b024-4cdc11673c11"
+    // clientId: config.PELPAYMENT_CLIENT_ID,
+    // clientSecret: config.PELPAYMENT_CLIENT_SECRET
+};
+
+// Pelpay payment ends
+
+
 
 
 

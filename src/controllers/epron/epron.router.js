@@ -47,7 +47,11 @@ import {
     // remove_recycler_to_collection_center,
     unblock_user,
     update_category,
-    update_sub_category
+    update_sub_category,
+    // payment_login,
+    pelpay_payment_login,
+    verify_payment,
+    pelpay_advice
 } from './epron.controllers.js';
 
 
@@ -110,6 +114,11 @@ router.patch('/approve-documents/:id', approved_documents_oem);
 router.patch('/disapprove-documents/:id', disapprove_documents_oem);
 
 router.get('/dashboard-counts', dashboard_counts);
+
+
+// Pelpay payements
+router.post('/payment_advice', pelpay_advice);
+router.get('/verify_payment/:ref', verify_payment)
 
 
 
