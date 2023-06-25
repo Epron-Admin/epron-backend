@@ -66,9 +66,9 @@ let logEquipment = new Schema({
     reference: {
         type: String,
     },
-    pelpay_merchantRef: {
-        type: String,
-    },
+    // pelpay_merchantRef: {
+    //     type: String,
+    // },
     ready_pickup: {
         type: Boolean,
         default: false,
