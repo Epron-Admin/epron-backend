@@ -1712,7 +1712,7 @@ export const pelpay_advice = (req, res) => {
             console.log(err);
         }
         if (access) {
-            console.log("Access key", access);
+            // console.log("Access key", access);
             // Authorization
             // req.headers['x-access-token'] =  access.access_token;
             if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
@@ -1730,7 +1730,7 @@ export const pelpay_advice = (req, res) => {
             },
             (error, response, body) => {
                 // console.log("error advice", error)
-                console.log("Bodyyyyyyyy", req.body);
+                // console.log("Bodyyyyyyyy", req.body);
                 const jsonContent = JSON.stringify(response.body);
                 res.end(jsonContent);
                 
@@ -1748,7 +1748,7 @@ export const verify_payment = (req, res) => {
             console.log(err);
         }
         if (access) {
-            console.log("Access key", access);
+            // console.log("Access key", access);
             // Authorization
             // req.headers['x-access-token'] =  access.access_token;
             if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
@@ -1766,7 +1766,7 @@ export const verify_payment = (req, res) => {
             },
             (error, response, body) => {
                 // console.log("error advice", error)
-                console.log("Bodyyyyyyyy", req.body);
+                // console.log("Bodyyyyyyyy", req.body);
                 const jsonContent = JSON.stringify(response.body);
                 res.end(jsonContent);
                 
