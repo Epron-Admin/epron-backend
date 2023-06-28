@@ -79,6 +79,7 @@ export const initialize_transaction = (req, res) => {
 
 export const update_payment_option = (req, res) => {
     Log.find({equipment_pin: req.params.pin}).exec((err, log) => {
+        console.log("Bulk log", log);
         if (err) {
             return res.json({error: true, status: 401, message: "An error occured" });
         }
