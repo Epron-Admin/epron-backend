@@ -664,7 +664,9 @@ export const update_logged_equipment = async (req, res) => {
                 log.sub_category_id = req.body.sub_category_id,
                 // log.sub_category_name = req.body.sub_category_name,
                 log.quantity = req.body.quantity,
-                log.weight = req.body.weight,
+                log.weight = ton_weight,
+                unit_weight = req.body.weight,
+                unit = req.body.unit,
                 // log.user_id = req.body.user_id,
                 // log.equipment_pin = pin,
                 log.updated_at = Date.now()

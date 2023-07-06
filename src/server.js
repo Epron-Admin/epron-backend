@@ -16,6 +16,8 @@ import recyclersRouter from './controllers/recyclers/recyclers.router.js';
 import collectionRouter from './controllers/collectioncenter/collection.router.js';
 import uploadRouter from './uploads.js';
 import dotenv from 'dotenv';
+
+
 // import uploadRouter from './sr./uploads.jsmport uploadRouter from './upload';
 // import verifier from 'email-verifier';
 
@@ -27,7 +29,7 @@ dotenv.config();
 const app = express();
 
 connectDB();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 6000;
 
 app.use(cors());
 app.options('*', cors);
@@ -53,9 +55,10 @@ app.use('*', function (req, res) {
 	res.send('Welcome to Epron Backend: 404, route not found');
 });
 
+const server = app.listen(port, () => console.log(`Express server running on ${process.env.NODE_ENV} mode on port ${port}`)); 
 
-const server = app.listen(port, () => console.log(`Express server running in ${process.env.NODE_ENV} mode on port ${port}`)); 
 
 export default server
+
 
 // module.exports = server;

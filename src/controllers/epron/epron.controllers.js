@@ -1645,19 +1645,19 @@ export const search_requestedPickups_by_date_range = async (req, res) => {
 
 // Pelpay paymet gateway for epron
 
-schedule.scheduleJob('*/60 * * * * *', async function() {
-    // This will run every Monday at 10:30;
-    // payment_login();
-    // console.log("environemt variables", config.PELPAYMENT_CLIENT_ID);
-    pelpay_payment_login();
-    // console.log('hey One Minute');
-});
-
-// schedule.scheduleJob('0 * * * *', async function() {
-//     // This will run every One Hour;
-//      pelpay_payment_login();
-//     console.log('hey! One Hour');
+// schedule.scheduleJob('*/60 * * * * *', async function() {
+//     // This will run every Monday at 10:30;
+//     // payment_login();
+//     // console.log("environemt variables", config.PELPAYMENT_CLIENT_ID);
+//     pelpay_payment_login();
+//     // console.log('hey One Minute');
 // });
+
+schedule.scheduleJob('0 * * * *', async function() {
+    // This will run every One Hour;
+     pelpay_payment_login();
+    console.log('hey! One Hour');
+});
 
 
 export const pelpay_payment_login = (req, res) => {
