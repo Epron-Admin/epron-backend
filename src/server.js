@@ -29,7 +29,7 @@ dotenv.config();
 const app = express();
 
 connectDB();
-const port = process.env.PORT || 6000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.options('*', cors);

@@ -934,7 +934,7 @@ export const asign_collection_center_to_recyclers = (req, res) => {
         else {
             // collection_center is the user id of which has a role of collector.
             User.findById({_id: req.body.collection_center, role: 'collector'}).exec((err2, center) => {
-                // console.log("collection center", center);
+                console.log("collection center", center);
                 if (err2) {
                     return res.json({error: true, status: 401, message: "An error occured in getting collection center"});
                 }
@@ -1004,13 +1004,24 @@ export const remove_collection_center_recycler_user = (req, res) => {
         }
         else {
             console.log("centers", user)
-            // the recycler id id the id of the user who is a recycler in this case.
-            const index = user.collection_center.includes(req.body.recycler_id);
+            // the recycler id is the id of the user who is a recycler in this case.
+            const index = user.collection_center.includes(req.body.collection_center);
             console.log("index", index);
             // if (!user.collection_center.includes(req.body.recycler_id)) {
             if (user.collection_center.length != 0) {
-                user.collection_center.splice(index, 1);
+                user.collection_center.splice(user.collection_center.indexOf(req.body.collection_center), 1);
                 user.save().then(result => {
+                    User.findById({_id: req.body.collection_center}).exec((err, center) => {
+                        if (!center) {
+                            res.send({code: 404, error: true, message: 'Can not find collection center assigned' });
+                        }
+                        if (err) {
+                            return res.json({error: true, status: 401, message: "An error occured while searching collection center"})
+                        }
+                        center.collection_center_assigned = false;
+                        center.save();
+
+                    });
                     res.json({ error: false, code: 200, status: 'success', message: 'collection center has been removed for this user'});
                     //res.status(200).send({mssage: 'update successful'});
                 }).catch(err => {
