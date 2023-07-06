@@ -655,7 +655,7 @@ export const update_logged_equipment = async (req, res) => {
                 if (req.body.unit === 'g') {
                     ton_weight = 0.0000011023 * req.body.weight;
                 }
-                const total = type.price * req.body.ton_weight;
+                const total = type.price * ton_weight;
             
                 log.category_id = req.body.category_id,
                 // log.category_name = req.body.category_name,
