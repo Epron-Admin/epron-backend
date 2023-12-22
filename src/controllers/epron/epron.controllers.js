@@ -1726,7 +1726,7 @@ export const pelpay_advice = (req, res) => {
             // console.log("Access key", access);
             // Authorization
             // req.headers['x-access-token'] =  access.access_token;
-            if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
+            if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token provided in headers' });
             req.body.integrationKey = process.env.INTEGRATION_KEY;
           request({
                 url: "https://api.pelpay.africa/Payment/advice",
