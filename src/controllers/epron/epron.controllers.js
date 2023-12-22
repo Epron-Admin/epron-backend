@@ -1673,7 +1673,7 @@ schedule.scheduleJob('0 * * * *', async function() {
 
 export const pelpay_payment_login = (req, res) => {
     request({
-        url: "https://api.pelpay.ng/api/Account/login",
+        url: "https://api.pelpay.africa/api/Account/login",
         method: "POST",
         json: true,   // <--Very important!!!
         body: paydata
@@ -1729,7 +1729,7 @@ export const pelpay_advice = (req, res) => {
             if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
             req.body.integrationKey = process.env.INTEGRATION_KEY;
           request({
-                url: "https://api.pelpay.ng/payment/advice",
+                url: "https://api.pelpay.africa/Payment/advice",
                 method: "POST",
                 json: true, // <--Very important!!!
                 headers :{
@@ -1765,7 +1765,7 @@ export const verify_payment = (req, res) => {
             if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
             req.body.integrationKey = process.env.INTEGRATION_KEY;
           request({
-                url: `https://api.pelpay.ng/api/Transaction/bypaymentreference/${req.params.ref}`,
+                url: `https://api.pelpay.africa/Transaction/bypaymentreference/${req.params.ref}`,
                 method: "GET",
                 json: true, // <--Very important!!!
                 headers :{
