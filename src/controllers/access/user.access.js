@@ -75,7 +75,7 @@ export const reg_userx = (req, res) => {
                     // User.findOne({email: req.body.email}).exec
                     User.findOne({ email: req.body.email }, (err, user) => {
                         // userEmail = req.body.email;
-                        console.log('User', user);
+                        // console.log('User', user);
                         if (!user) {
                             // req.flash('error', 'No account with that email address exists.');
                             // return next(new Error('No account with that email address exists.'));

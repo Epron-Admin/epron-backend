@@ -1667,7 +1667,7 @@ export const search_requestedPickups_by_date_range = async (req, res) => {
 schedule.scheduleJob('0 * * * *', async function() {
     // This will run every One Hour;
      pelpay_payment_login();
-    console.log('hey! One Hour');
+    // console.log('hey! One Hour');
 });
 
 
