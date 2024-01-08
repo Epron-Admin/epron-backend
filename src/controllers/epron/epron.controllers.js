@@ -1789,8 +1789,8 @@ export const verify_payment = (req, res) => {
 }
 
 const paydata = {
-    clientId: "E-w0000071",
-    clientSecret: "8cfbeed8-0932-4149-af1d-cba5695f64e9"
+    clientId: "Ewa0000079",
+    clientSecret: "48e0e5be-43cc-4550-8804-7ae154cab41c"
     // clientId: config.PELPAYMENT_CLIENT_ID,
     // clientSecret: config.PELPAYMENT_CLIENT_SECRET
 };
