@@ -51,7 +51,8 @@ import {
     // payment_login,
     pelpay_payment_login,
     verify_payment,
-    pelpay_advice
+    pelpay_advice,
+    update_admin_role
 } from './epron.controllers.js';
 
 
@@ -76,6 +77,8 @@ router.post('/user-reg', reg_user_erpon);
 router.get('/admin_users', fetch_all_admin_users);
 router.patch('/unblock_user/:id', unblock_user);
 router.patch('/block_user/:id', block_user);
+
+router.patch('/update-admin-role/:id', update_admin_role);
 
 router.get('/filter_by_date_range', find_user_by_date_range);
 router.get('/filter_by_date', find_user_by_specific_date);
@@ -118,7 +121,7 @@ router.get('/dashboard-counts', dashboard_counts);
 
 // Pelpay payements
 router.post('/payment_advice', pelpay_advice);
-router.get('/verify_payment/:ref', verify_payment)
+router.get('/verify_payment/:ref', verify_payment);
 
 
 

@@ -567,6 +567,33 @@ export const unblock_user = (req, res) => {
     });
 }
 
+export const update_admin_role = (req, res) => {
+    User.findById({_id: req.params.id}, (err, user) => {
+        if (err) {
+            res.send({code: 505, error: true, err: err, message: 'error occured' });
+            // console.log(err);
+        }
+        if (user.role === "epron" && user.epron_admin === "superadmin") {
+            res.send({code: 401, error: true, message: 'Only super admin can do this' });
+        }
+        if (!user) {
+            res.send({code: 404, error: true, message: 'Can not find user' });
+        }    
+            // return next(new Error('Could not load document'));
+        else {
+            user.epron_admin = req.body.epron_admin,
+            user.updated_at = Date.now()
+            user.save().then(result => {
+                res.json({ error: false, code: 200, status: 'success', message: 'user admin role updated'});
+                //res.status(200).send({mssage: 'update successful'});
+            }).catch(err => {
+                // console.log(err.code);
+                res.send({ error: true, message: 'failed to update user admin role' });
+            });
+        }
+    });
+}
+
 export const fetch_all_loged_ewaste = async (req, res) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
