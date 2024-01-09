@@ -1754,7 +1754,7 @@ export const pelpay_advice = (req, res) => {
 
 export const verify_payment = (req, res) => {
     Pelpay.findOne((err, access) => {
-        // console.log('query data', access)
+        console.log('query data', access)
         if (err) {
             console.log(err);
         }
@@ -1763,7 +1763,8 @@ export const verify_payment = (req, res) => {
             // Authorization
             // req.headers['x-access-token'] =  access.access_token;
             if (!access.access_token) return res.status(401).send({ auth: false, message: 'No token providedin headers' });
-            req.body.integrationKey = process.env.INTEGRATION_KEY;
+            req.body.integrationKey = "0f591791-8448-4378-8d88-6871dafdc631";
+            // req.body.integrationKey = process.env.INTEGRATION_KEY;
           request({
                 url: `https://api.pelpay.africa/Transaction/bypaymentreference/${req.params.ref}`,
                 method: "GET",
@@ -1778,6 +1779,7 @@ export const verify_payment = (req, res) => {
             (error, response, body) => {
                 // console.log("error advice", error)
                 // console.log("Bodyyyyyyyy", req.body);
+                console.log("Response", response.body);
                 const jsonContent = JSON.stringify(response.body);
                 res.end(jsonContent);
                 
