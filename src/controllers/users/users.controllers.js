@@ -364,6 +364,7 @@ export const password_reset = (req, res, next) => {
  async.waterfall([
          (done) => {
             User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
+                // console.log("err", err)
                 if (!user) {
                     // console.log('password from front: ', req.body);
                     // return next(new Error('Password reset token is invalid or has expired.'));
@@ -374,6 +375,7 @@ export const password_reset = (req, res, next) => {
                 if (req.body.password === req.body.confirmPassword) {
                     const newPassword = bcrypt.hashSync(req.body.password, 10);
                         User.findByIdAndUpdate(user._id, { password: newPassword, resetPasswordToken: undefined, resetPasswordExpires: undefined }, (error, data) => {
+                            // console.log("error", error);
                             // res.json({ 'user': data });
 
                             let mailTransporter = nodemailer.createTransport({
@@ -385,7 +387,7 @@ export const password_reset = (req, res, next) => {
                             });
                             let mailDetails = {
                                 from: `Epron Admin <epronnigeria@gmail.com>`,
-                                to: req.body.email,
+                                to: user.email,
                                 subject: 'Password has been changed',
                                 text: 'Hello,\n\n' + ' This is a confirmation that the password for your account ' + user.email + ' has just been changed'
                             };
@@ -393,7 +395,7 @@ export const password_reset = (req, res, next) => {
                             mailTransporter.sendMail(mailDetails, function(err, data) {
                                 // console.log("Dattttttttttttaaaaaaaa", data);
                                 if(err) {
-                                    console.log('Error Occurs', err);
+                                    // console.log('Error Occurs', err);
                                     return res.send({error: true, code: 401, message: "Failed to reset user password"});
                                 } else {
                                     // console.log('Email sent successfully');
@@ -428,10 +430,10 @@ export const password_reset = (req, res, next) => {
             });
         }
         
-     ]).catch(err => {
-         console.log(err);
+    ]).catch(err => {
+        //  console.log(err);
          res.send({err});
-     })
+    })
 
 }
 
