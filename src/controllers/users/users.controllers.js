@@ -314,7 +314,7 @@ export const forgot_password = (req, res, next) => {
                 from: `Epron Admin <epronnigeria@gmail.com>`,
                 to: req.body.email,
                 subject: 'Reset your password',
-                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/reset-password' + token + '\n\n' +
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/reset-password/' + token + '\n\n' +
                 'If you did not request this, please ignore this email and your password will remain unchanged'
             };
             mailTransporter.sendMail(mailDetails, function(err, data) {
@@ -360,7 +360,7 @@ export const forgot_password = (req, res, next) => {
 
 // function to change the forgotten password
 export const password_reset = (req, res, next) => {
-    console.log('password from front: ', req.params.token);
+    // console.log('password from front: ', req.params.token);
  async.waterfall([
          (done) => {
             User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
@@ -393,7 +393,7 @@ export const password_reset = (req, res, next) => {
                             mailTransporter.sendMail(mailDetails, function(err, data) {
                                 // console.log("Dattttttttttttaaaaaaaa", data);
                                 if(err) {
-                                    // console.log('Error Occurs', err);
+                                    console.log('Error Occurs', err);
                                     return res.send({error: true, code: 401, message: "Failed to reset user password"});
                                 } else {
                                     // console.log('Email sent successfully');
