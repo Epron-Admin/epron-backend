@@ -306,7 +306,8 @@ export const forgot_password = (req, res, next) => {
                 service: 'gmail',
                 auth: {
                     user: 'epronnigeria@gmail.com',
-                    pass: 'fpzoqihwtdstymgx'
+                    pass: 'ulaaprnvrwogzkci'
+                    // pass: 'fpzoqihwtdstymgx'
                 }
             });
 
@@ -382,7 +383,7 @@ export const password_reset = (req, res, next) => {
                                 service: 'gmail',
                                 auth: {
                                     user: 'epronnigeria@gmail.com',
-                                    pass: 'fpzoqihwtdstymgx'
+                                    pass: 'ulaaprnvrwogzkci'
                                 }
                             });
                             let mailDetails = {
@@ -1161,7 +1162,7 @@ export const feedback = async (req, res) => {
                 service: 'gmail',
                 auth: {
                     user: 'epronnigeria@gmail.com',
-                    pass: 'fpzoqihwtdstymgx'
+                    pass: 'ulaaprnvrwogzkci'
                 }
             });
              

@@ -95,7 +95,7 @@ export const reg_userx = (req, res) => {
                         service: 'gmail',
                         auth: {
                             user: 'epronnigeria@gmail.com',
-                            pass: 'fpzoqihwtdstymgx'
+                            pass: 'ulaaprnvrwogzkci'
                         }
                     });
                      
@@ -217,7 +217,7 @@ export const reg_user_fake = (req, res) => {
                         service: 'gmail',
                         auth: {
                             user: 'epronnigeria@gmail.com',
-                            pass: 'fpzoqihwtdstymgx'
+                            pass: 'ulaaprnvrwogzkci'
                         }
                     });
                      
@@ -291,7 +291,7 @@ export const generate_verify_token_validate_user = (req, res, next) => {
                 service: 'gmail',
                 auth: {
                     user: 'epronnigeria@gmail.com',
-                    pass: 'fpzoqihwtdstymgx'
+                    pass: 'ulaaprnvrwogzkci'
                 }
             });
              
