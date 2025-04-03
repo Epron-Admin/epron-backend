@@ -315,7 +315,7 @@ export const forgot_password = (req, res, next) => {
                 from: `Epron Admin <epronnigeria@gmail.com>`,
                 to: req.body.email,
                 subject: 'Reset your password',
-                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/reset-password/' + token + '\n\n' +
+                text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://blackbox.epron.org.ng/reset-password/' + token + '\n\n' +
                 'If you did not request this, please ignore this email and your password will remain unchanged'
             };
             mailTransporter.sendMail(mailDetails, function(err, data) {
@@ -337,7 +337,7 @@ export const forgot_password = (req, res, next) => {
             // from: 'Epron Admin <epron@gmail.com>',
             // to: req.body.email,
             // subject: 'Password reset',
-            // text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/users/password-reset/' + token + '\n\n' +
+            // text: 'You are receiving this because you (or someone else) have requested the reset of the password ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://blackbox.epron.org.ng/users/password-reset/' + token + '\n\n' +
             //             'If you did not request this, please ignore this email and your password will remain unchanged'
             // };
 

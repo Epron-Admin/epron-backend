@@ -364,7 +364,7 @@ export const reg_user_erpon = (req, res, next) => {
                         from: `Epron Admin <epronnigeria@gmail.com>`,
                         to: req.body.email,
                         subject: 'Epron Registration',
-                        text: 'You are receiving this because Epron have requested to sign you up as admin on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://epronregister.com.ng/verify/' + token + '\n\n' +
+                        text: 'You are receiving this because Epron have requested to sign you up as admin on Epron ' + ' please click on the following link, or paste this into your browser to complete the process:\n\n' + 'https://blackbox.epron.org.ng/verify/' + token + '\n\n' +
                         'If you did not request this, please ignore this email and your registration will be canceled.\n\n' + ' Your password is ' + (req.body.password) + ' you can change it at anytime for privacy.'
                     };
                      
